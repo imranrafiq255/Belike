@@ -1,0 +1,27 @@
+.schoolportalcards{
+    border-radius:5%;
+    padding: 1rem;
+}
+.schoolportalcards:hover{
+    background-color: #40b08c;
+   transition: ease-in-out 0.3s;
+
+}
+.schoolportalcards:hover .patners{
+    filter: invert();
+
+}
+.admcard{
+   
+    background-color: white;
+    height: 6rem;
+    width: 10rem;
+}
+.admcard icon{
+   
+   
+}
+.admcard h3{
+   
+    font-weight: 700;
+}
