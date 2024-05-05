@@ -1,7 +1,9 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import Pic from "../../../Assets/education.jpg";
+import { useDispatch, useSelector } from "react-redux";
+import loadCurrentAdminAction from "../../Redux/Admin/Actions/loadCurrentAdminAction.Admin";
 export const AdminAddStudent = () => {
   const [activeComponent, setActiveComponent] = useState("myproduct");
   const [userRole, setuserRole] = useState("Admin");
@@ -19,6 +21,7 @@ export const AdminAddStudent = () => {
     supplierId: "",
   });
   const [studentAvatar, setStudentAvatar] = useState(false);
+  const dispatch = useDispatch();
   const handlechange = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
@@ -50,7 +53,13 @@ export const AdminAddStudent = () => {
       setStudentAvatar(URL.createObjectURL(input.files[0]));
     });
   };
-  console.log(studentAvatar);
+
+  useEffect(() => {
+    dispatch(loadCurrentAdminAction());
+  }, [dispatch]);
+
+  const { error } = useSelector((state) => state.currentAdminData);
+  console.log(error ? error : "");
   return (
     <div className="md:px-8 mt-4">
       {userRole === "Admin" ? (

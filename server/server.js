@@ -8,6 +8,11 @@ cloudinary.v2.config({
   api_secret: process.env.API_SECRET,
   secure: true,
 });
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "Imran Malik",
+  });
+});
 const PORT = process.env.PORT || 5500;
 databaseConnection(process.env.MONGO_URI);
 app.listen(PORT, () => {
