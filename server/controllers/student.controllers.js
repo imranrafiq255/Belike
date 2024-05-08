@@ -78,11 +78,12 @@ exports.studentLogout = async (req, res) => {
 
 exports.viewAttendance = async (req, res) => {
   try {
-    const studentId = req?.params?.student_id;
+    const studentId = req?.currentStudent?._id;
     if (!studentId) {
-      return res.status(404).json({
-        statusCode: STATUS_CODES[404],
-        message: "Student Id paramater is missing",
+      res.clearCookie("studentToken");
+      return res.status(401).json({
+        statusCode: STATUS_CODES[401],
+        message: "Please login",
       });
     }
     const studentAttendance = await attendanceModel.find({
@@ -94,9 +95,21 @@ exports.viewAttendance = async (req, res) => {
         message: `The student with id of: ${studentId} ,has no record in database with this id`,
       });
     }
+    const attendanceData = studentAttendance
+      .map((attendance) => {
+        const studentData1 = attendance.attendanceStudents.find(
+          (item) =>
+            item?.studentId.toString() === req?.currentStudent?._id.toString()
+        );
+        return studentData1;
+      })
+      .filter(Boolean);
+
+    console.log("Attendance Data:", attendanceData);
     return res.status(200).json({
       statusCode: STATUS_CODES[200],
       studentAttendance,
+      attendanceData,
     });
   } catch (error) {
     return res.status(500).json({
@@ -186,6 +199,28 @@ exports.submitFeedbacks = async (req, res) => {
 
 exports.loadCurrentStudent = async (req, res) => {
   try {
+    if (!req?.currentStudent) {
+      return res.status(401).json({
+        statusCode: STATUS_CODES[401],
+        message: "Please login",
+      });
+    }
+    const currentStudent = await studentModel
+      .findOne({
+        _id: req?.currentStudent,
+      })
+      .populate("studentGrade");
+    if (!currentStudent) {
+      res.clearCookie("studentToken");
+      return res.status(404).json({
+        statusCode: STATUS_CODES[404],
+        message: "Student not found in database, please login again",
+      });
+    }
+    return res.status(200).json({
+      statusCode: STATUS_CODES[200],
+      currentStudent,
+    });
   } catch (error) {
     return res.status(500).json({
       statusCode: STATUS_CODES[500],

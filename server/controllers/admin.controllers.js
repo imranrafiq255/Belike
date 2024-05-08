@@ -29,8 +29,7 @@ exports.createAdmin = async (req, res) => {
         message: `${adminEmail} is already registered`,
       });
     }
-    let image = files.filter((file) => file.mimetype.startsWith("image/"));
-
+    let image = files[0];
     if (image.length > 0) {
       image = image[0];
     }
@@ -115,6 +114,7 @@ exports.addStudent = async (req, res) => {
       studentPassword,
       studentId,
       studentIdCardNumber,
+      studentCourses,
     } = req.body;
     if (!studentName) {
       return res.status(404).json({
@@ -146,6 +146,12 @@ exports.addStudent = async (req, res) => {
         message: "Student Grade is missing",
       });
     }
+    if (!studentCourses || studentCourses.length === 0) {
+      return res.status(404).json({
+        statusCode: STATUS_CODES[404],
+        message: "Student Courses are missing",
+      });
+    }
     const isStudentEmailExisted = await studentModel.findOne({ studentEmail });
     const isStudentIdCardExisted = await studentModel.findOne({
       studentIdCardNumber,
@@ -164,24 +170,24 @@ exports.addStudent = async (req, res) => {
           "Student Id Card Number is already existed into database, please add unqiue studend id card",
       });
     }
-    files = files?.filter((file) => file?.mimetype?.startsWith("image/"));
-    if (files.length === 2) {
-      var studentAvatar = files[0];
-      var studentIdCardCopy = files[1];
-      var studentAvatarURI = getImageUri(studentAvatar);
-      var studentIdCardCopyURI = getImageUri(studentIdCardCopy);
-    } else if (files.length === 1) {
-      var studentAvatar = files[0];
-      var studentAvatarURI = getImageUri(studentAvatar);
+    let studentAvatar = null;
+    let studentIdCardCopy = null;
+    if (files["studentAvatar"] && files["studentAvatar"].length > 0) {
+      studentAvatar = files["studentAvatar"][0];
+    }
+    if (files["studentIdCardCopy"] && files["studentIdCardCopy"].length > 0) {
+      studentIdCardCopy = files["studentIdCardCopy"][0];
     }
     if (studentAvatar) {
-      let studentAvatarUpload = await cloudinary.v2.uploader.upload(
+      const studentAvatarURI = getImageUri(studentAvatar);
+      const studentAvatarUpload = await cloudinary.uploader.upload(
         studentAvatarURI.content
       );
       studentAvatar = studentAvatarUpload.url;
     }
     if (studentIdCardCopy) {
-      let studentIdCardCopyUpload = await cloudinary.v2.uploader.upload(
+      const studentIdCardCopyURI = getImageUri(studentIdCardCopy);
+      const studentIdCardCopyUpload = await cloudinary.uploader.upload(
         studentIdCardCopyURI.content
       );
       studentIdCardCopy = studentIdCardCopyUpload.url;
@@ -192,6 +198,7 @@ exports.addStudent = async (req, res) => {
       studentPassword,
       studentId,
       studentGrade,
+      studentCourses,
       studentIdCardNumber: studentIdCardNumber || "",
       studentAvatar: studentAvatar || "",
       studentIdCardCopy: studentIdCardCopy || "",
@@ -216,45 +223,28 @@ exports.addTeacher = async (req, res) => {
       teacherPassword,
       teacherSalary,
       teacherIdCardNumber,
+      teacherJobDate,
+      teacherCourses,
+      teacherGrades,
     } = req.body;
     let files = req.files;
-    files = files?.filter((file) => file?.mimetype?.startsWith("image/"));
-    if (!teacherName) {
-      return res.status(404).json({
-        statusCode: STATUS_CODES[404],
-        message: "Teacher Name is missing",
-      });
-    }
-    if (!teacherEmail) {
-      return res.status(404).json({
-        statusCode: STATUS_CODES[404],
-        message: "Teacher Email is missing",
-      });
-    }
-    if (!teacherPassword) {
-      return res.status(404).json({
-        statusCode: STATUS_CODES[404],
-        message: "Teacher Password is missing",
-      });
-    }
-    if (!teacherIdCardNumber) {
-      return res.status(404).json({
-        statusCode: STATUS_CODES[404],
-        message: "Teacher Id Card Number is missing",
-      });
-    }
-    if (!teacherSalary) {
-      return res.status(404).json({
-        statusCode: STATUS_CODES[404],
-        message: "Teacher Grades are missing",
+    if (
+      !teacherName ||
+      !teacherEmail ||
+      !teacherPassword ||
+      !teacherIdCardNumber ||
+      !teacherSalary
+    ) {
+      return res.status(400).json({
+        statusCode: STATUS_CODES[400],
+        message: "One or more required fields are missing",
       });
     }
     const isTeacherEmailExisted = await teacherModel.findOne({ teacherEmail });
     if (isTeacherEmailExisted) {
       return res.status(409).json({
         statusCode: STATUS_CODES[409],
-        message:
-          "Teacher Email is already existed into database, please use unqiue",
+        message: "Teacher email already exists",
       });
     }
     const isTeacherIdCardNumberExisted = await teacherModel.findOne({
@@ -263,45 +253,50 @@ exports.addTeacher = async (req, res) => {
     if (isTeacherIdCardNumberExisted) {
       return res.status(409).json({
         statusCode: STATUS_CODES[409],
-        message:
-          "Teacher Id Card Number is already existed into database, please use unqiue",
+        message: "Teacher ID card number already exists",
       });
     }
-    if (files.length === 2) {
-      var teacherAvatar = files[0];
-      var teacherIdCardCopy = files[1];
-      var teacherAvatarURI = getImageUri(teacherAvatar);
-      var teacherIdCardCopyURI = getImageUri(teacherIdCardCopy);
-    } else if (files.length === 1) {
-      var teacherAvatar = files[0];
-      var teacherAvatarURI = getImageUri(teacherAvatar);
+    let teacherAvatar = null;
+    let teacherIdCardCopy = null;
+    if (files["teacherAvatar"] && files["teacherAvatar"].length > 0) {
+      teacherAvatar = files["teacherAvatar"][0];
+    }
+    if (files["teacherIdCardCopy"] && files["teacherIdCardCopy"].length > 0) {
+      teacherIdCardCopy = files["teacherIdCardCopy"][0];
     }
     if (teacherAvatar) {
-      let teacherAvatarUpload = await cloudinary.v2.uploader.upload(
+      const teacherAvatarURI = getImageUri(teacherAvatar);
+      const teacherAvatarUpload = await cloudinary.uploader.upload(
         teacherAvatarURI.content
       );
       teacherAvatar = teacherAvatarUpload.url;
     }
     if (teacherIdCardCopy) {
-      let teacherIdCardCopyUpload = await cloudinary.v2.uploader.upload(
+      const teacherIdCardCopyURI = getImageUri(teacherIdCardCopy);
+      const teacherIdCardCopyUpload = await cloudinary.uploader.upload(
         teacherIdCardCopyURI.content
       );
       teacherIdCardCopy = teacherIdCardCopyUpload.url;
     }
-    const newTeacher = await new teacherModel({
+    const newTeacher = await teacherModel.create({
       teacherName,
       teacherEmail,
       teacherPassword,
       teacherIdCardNumber,
       teacherSalary,
-      teacherAvatar: teacherAvatar || "",
-      teacherIdCardCopy: teacherIdCardCopy || "",
-    }).save();
+      teacherAvatar,
+      teacherIdCardCopy,
+      teacherCourses,
+      teacherGrades,
+      teacherJobDate,
+    });
     return res.status(201).json({
       statusCode: STATUS_CODES[201],
-      message: `${newTeacher.teacherName} is added successfully`,
+      message: `${newTeacher.teacherName} added successfully`,
+      data: newTeacher,
     });
   } catch (error) {
+    console.error("Error adding teacher:", error);
     return res.status(500).json({
       statusCode: STATUS_CODES[500],
       message: error.message,
@@ -386,13 +381,12 @@ exports.addTeacherGrades = async (req, res) => {
 };
 exports.addGrade = async (req, res) => {
   try {
-    const {
+    let {
       gradeCategory,
       gradeRoomNumber,
-      gradeStudents,
       gradeCourses,
-      gradeTeachers,
       gradeSchoolTiming,
+      gradeIncharge,
     } = req.body;
     if (!gradeCategory) {
       return res.status(404).json({
@@ -406,28 +400,38 @@ exports.addGrade = async (req, res) => {
         message: "Grade Room Number is missing",
       });
     }
-    if (!gradeStudents) {
-      return res.status(404).json({
-        statusCode: STATUS_CODES[404],
-        message: "Grade Students are missing",
-      });
-    }
     if (!gradeCourses) {
       return res.status(404).json({
         statusCode: STATUS_CODES[404],
         message: "Grade Courses are missing",
       });
     }
-    if (!gradeTeachers) {
+    if (!gradeIncharge) {
       return res.status(404).json({
         statusCode: STATUS_CODES[404],
-        message: "Grade Teachers are missing",
+        message: "Grade Incharge is missing",
       });
     }
     if (!gradeSchoolTiming) {
       return res.status(404).json({
         statusCode: STATUS_CODES[404],
         message: "Grade School Timing is missing",
+      });
+    }
+    const isTeacherForInchargeExisted = await teacherModel.findOne({
+      _id: gradeIncharge,
+    });
+    if (!isTeacherForInchargeExisted) {
+      return res.status(404).json({
+        statusCode: STATUS_CODES[404],
+        message:
+          "Teacher is not existing into database to be the Grade Incharge",
+      });
+    }
+    if (isTeacherForInchargeExisted.teacherGradeIncharge) {
+      return res.status(409).json({
+        statusCode: STATUS_CODES[409],
+        message: `${isTeacherForInchargeExisted.teacherName} is already a grade incharge, please chose another one`,
       });
     }
     const isGradeCategoryExisted = await gradeModel.findOne({ gradeCategory });
@@ -440,11 +444,12 @@ exports.addGrade = async (req, res) => {
     const newGrade = await new gradeModel({
       gradeCategory,
       gradeRoomNumber,
-      gradeStudents,
-      gradeCourses,
-      gradeTeachers,
       gradeSchoolTiming,
+      gradeCourses,
+      gradeIncharge,
     }).save();
+    isTeacherForInchargeExisted.teacherGradeIncharge = newGrade?._id;
+    await isTeacherForInchargeExisted.save();
     return res.status(201).json({
       statusCode: STATUS_CODES[201],
       message: `${newGrade.gradeCategory} is added successfully`,
@@ -460,14 +465,7 @@ exports.addGrade = async (req, res) => {
 exports.addCourse = async (req, res) => {
   try {
     const { courseTitle, courseTimeTable } = req.body;
-    const courseGrade = req?.params?.grade_id;
     const courseTeacher = req?.params?.teacher_id;
-    if (!courseGrade) {
-      return res.status(404).json({
-        statusCode: STATUS_CODES[404],
-        message: "Grade Id is missing!",
-      });
-    }
     if (!courseTeacher) {
       return res.status(404).json({
         statusCode: STATUS_CODES[404],
@@ -487,17 +485,22 @@ exports.addCourse = async (req, res) => {
         message: "Course Title must be unique",
       });
     }
+    const isCourseTeacherExisted = await teacherModel.findOne({
+      _id: courseTeacher,
+    });
+    if (!isCourseTeacherExisted) {
+      return res.status(404).json({
+        statusCode: STATUS_CODES[404],
+        message: "Course Teacher not existed into database",
+      });
+    }
     const newCourse = await new courseModel({
       courseTitle,
       courseTimeTable: courseTimeTable || "",
-      courseGrade,
       courseTeacher,
     }).save();
-    const grade = await gradeModel.findOne({ _id: courseGrade });
-    if (grade) {
-      grade.gradeCourses.push(newCourse._id);
-      await grade.save();
-    }
+    isCourseTeacherExisted.teacherCourses.push(newCourse._id);
+    await isCourseTeacherExisted.save();
     return res.status(201).json({
       statusCode: STATUS_CODES[201],
       message: `Course with title ${newCourse.courseTitle} is added successfully`,
@@ -644,6 +647,51 @@ exports.viewGradeAttendance = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      statusCode: STATUS_CODES[500],
+      message: error.message,
+    });
+  }
+};
+
+exports.loadAllGrades = async (req, res) => {
+  try {
+    const grades = await gradeModel.find();
+    return res.status(200).json({
+      statusCode: STATUS_CODES[200],
+      grades,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      statusCode: STATUS_CODES[500],
+      message: error.message,
+    });
+  }
+};
+
+exports.loadAllCourses = async (req, res) => {
+  try {
+    const courses = await courseModel.find();
+    return res.status(200).json({
+      statusCode: STATUS_CODES[200],
+      courses,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      statusCode: STATUS_CODES[500],
+      message: error.message,
+    });
+  }
+};
+
+exports.loadAllStudents = async (req, res) => {
+  try {
+    const students = await studentModel.find();
+    return res.status(200).json({
+      statusCode: STATUS_CODES[200],
+      students,
+    });
+  } catch (error) {
+    return res.status(500).json({
       statusCode: STATUS_CODES[500],
       message: error.message,
     });

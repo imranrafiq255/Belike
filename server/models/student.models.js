@@ -27,6 +27,14 @@ const studentSchema = mongoose.Schema(
     studentIdCardCopy: {
       type: String,
     },
+    studentCourses: [
+      {
+        courseId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Course",
+        },
+      },
+    ],
     studentAvatar: String,
   },
   { timestamp: true }

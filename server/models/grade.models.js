@@ -7,22 +7,6 @@ const gradeSchema = mongoose.Schema(
       required: [true, "Grade Category is required"],
       unique: [true, "Grade Category must be unique"],
     },
-    gradeStudents: [
-      {
-        studentId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Student",
-        },
-      },
-    ],
-    gradeTeachers: [
-      {
-        teacherId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "Teacher",
-        },
-      },
-    ],
     gradeCourses: [
       {
         gradeId: {
@@ -41,6 +25,10 @@ const gradeSchema = mongoose.Schema(
     ],
     gradeRoomNumber: String,
     gradeSchoolTiming: String,
+    gradeIncharge: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Grade",
+    },
   },
   { timestamps: true }
 );

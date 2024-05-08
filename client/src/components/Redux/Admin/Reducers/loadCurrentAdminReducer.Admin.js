@@ -2,7 +2,7 @@ import { createReducer } from "@reduxjs/toolkit";
 
 const intialState = {
   isLoading: false,
-  currentAdminDate: null,
+  currentAdminData: null,
   error: null,
 };
 

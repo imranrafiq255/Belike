@@ -121,9 +121,9 @@ exports.takeAttendance = async (req, res) => {
 exports.loadCurrentTeacher = async (req, res) => {
   try {
     const teacherId = req?.currentTeacher?._id;
-    const isCurrentTeacherExisted = await teacherModel.findOne({
-      _id: teacherId,
-    });
+    const isCurrentTeacherExisted = await teacherModel
+      .findOne({ _id: teacherId })
+      .populate("teacherGradeIncharge");
     if (!isCurrentTeacherExisted) {
       return res.status(404).json({
         statusCode: STATUS_CODES[404],
@@ -288,6 +288,31 @@ exports.viewGradeAttendance = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
+      statusCode: STATUS_CODES[500],
+      message: error.message,
+    });
+  }
+};
+
+exports.loadAllStudentOnSameGradeIncharge = async (req, res) => {
+  try {
+    const gradeId = req?.currentTeacher?.teacherGradeIncharge;
+    if (!gradeId) {
+      return res.status(404).json({
+        statusCode: STATUS_CODES[404],
+        message:
+          "Grade Id is missing from Teacher Grade Incharge, please login!",
+      });
+    }
+    const studentsSameGrade = await studentModel.find({
+      studentGrade: gradeId,
+    });
+    return res.status(200).json({
+      statusCode: STATUS_CODES[200],
+      studentsSameGrade,
+    });
+  } catch (error) {
+    return res.status(500).json({
       statusCode: STATUS_CODES[500],
       message: error.message,
     });

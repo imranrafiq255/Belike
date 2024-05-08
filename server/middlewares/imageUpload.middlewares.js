@@ -14,5 +14,11 @@ const multipleUpload = multer({
       );
     }
   },
-}).array("media", 2);
+}).fields([
+  { name: "teacherAvatar", maxCount: 1 },
+  { name: "teacherIdCardCopy", maxCount: 1 },
+  { name: "studentAvatar", maxCount: 1 },
+  { name: "studentIdCardCopy", maxCount: 1 },
+]);
+
 module.exports = multipleUpload;

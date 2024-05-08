@@ -48,6 +48,10 @@ const teacherSchema = mongoose.Schema({
   teacherAvatar: {
     type: String,
   },
+  teacherGradeIncharge: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Grade",
+  },
 });
 
 teacherSchema.pre("save", async function (next) {

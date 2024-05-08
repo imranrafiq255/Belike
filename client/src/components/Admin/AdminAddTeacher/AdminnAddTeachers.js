@@ -1,209 +1,380 @@
-import axios from 'axios';
-import React, { useState } from 'react';
-import { toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  handleShowFailureToast,
+  handleShowSuccessToast,
+} from "../../ToastMessages/ToastMessage";
+import { Toaster } from "react-hot-toast";
 export const AdminAddTeacher = () => {
-    const [activeComponent, setActiveComponent] = useState('myproduct');
-    const [userRole,setuserRole]=useState("Admin")
-   
-  const [Showmenu,setShowmenu]=useState(false)
-    const [AddCourse,setAddCourse]=useState({
-      teacherName:"",
-      category:"",
-      teacherEmail:"",
-      teacherCourses:"",
-      teacherSalary:"",
-      avatar:"",
-      stock:"",
-      description:"",
-      supplierId:"",
-    })
-    const handlechange=(e)=>{
-      e.preventDefault();
-     const {name,value}=e.target;
-     setAddCourse(prev=>({
-      ...prev,
-      [name]:value,
-     }))
-    }
-    const handlesubmitt=async(e)=>{
-      e.preventDefault();
-      console.log(AddCourse);
+  const [courses, setCourses] = useState(null);
+  const [grades, setGrades] = useState(null);
+  const [teacherAvatar, setTeacherAvatar] = useState(null);
+  const [teacherIdCardCopy, setTeacherIdCardCopy] = useState(null);
+  const [teacherEmail, setTeacherEmail] = useState("");
+  const [teacherPassword, setTeacherPassword] = useState("");
+  const [teacherSalary, setTeacherSalary] = useState("");
+  const [teacherJobDate, setTeacherJobDate] = useState("");
+  const [teacherIdCardNumber, setTeacherIdCardNumber] = useState("");
+  const [teacherGrades, setTeacherGrades] = useState([]);
+  const [teacherCourses, setTeacherCourses] = useState([]);
+  const [teacherName, setTeacherName] = useState([]);
+  useEffect(() => {
+    const fetchAllGrades = async () => {
       try {
-            const response=await axios.post('http://localhost:5200/AddCourse',AddCourse)
-            toast.success('product added successfuly')
+        const response = await axios.get("/api/v1/admin/load-all-grades");
+        setGrades(response.data.grades);
       } catch (error) {
-        console.log(error);
+        console.log(error.response.data.message);
       }
-       console.log(AddCourse);
+    };
+    fetchAllGrades();
+    const fetchAllCourses = async () => {
+      try {
+        const response = await axios.get("/api/v1/admin/load-all-courses");
+        setCourses(response.data.courses);
+      } catch (error) {
+        console.log(error.response.data.message);
+      }
+    };
+    fetchAllCourses();
+  }, []);
+
+  const addTeacherDataSendHandler = async (e) => {
+    e.preventDefault();
+    if (
+      teacherAvatar &&
+      teacherName &&
+      teacherEmail &&
+      teacherPassword &&
+      teacherGrades &&
+      teacherCourses &&
+      teacherIdCardNumber &&
+      teacherIdCardCopy &&
+      teacherSalary &&
+      teacherJobDate
+    ) {
+      let Grades = [];
+      teacherGrades.map((grade) => {
+        return Grades.push({ teacherId: grade });
+      });
+      const Courses = [];
+      teacherCourses.map((course) => {
+        return Courses.push({ courseId: course });
+      });
+      const data = {
+        teacherEmail,
+        teacherPassword,
+        teacherName,
+        teacherAvatar,
+        teacherCourses: Courses,
+        teacherGrades: Grades,
+        teacherIdCardNumber,
+        teacherIdCardCopy,
+        teacherSalary,
+        teacherJobDate,
+      };
+      const sendTeacherData = async () => {
+        try {
+          const response = await axios.post("/api/v1/admin/add-teacher", data, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
+          console.log(response.data.message);
+          handleShowSuccessToast(response.data.message);
+        } catch (error) {
+          console.log(error.response.data.message);
+          handleShowFailureToast(error.response.data.message);
+        }
+      };
+      sendTeacherData();
+    } else {
+      handleShowFailureToast("Input parameter is missing!");
     }
-    
+  };
+  const [selectedGrades, setSelectedGrades] = useState([]);
+  const [SelectedCourses, setSelectedCourses] = useState([]);
 
-    const [selectedOptions, setSelectedOptions] = useState([]);
-    const [SelectedCourses, setSelectedCourses] = useState([]);
- 
-
-    const handleSelectChange = (event) => {
-      const selectedOption = event.target.value;
-      if (!selectedOptions.includes(selectedOption)) {
-        setSelectedOptions([...selectedOptions, selectedOption]);
+  useEffect(() => {
+    setTeacherCourses(SelectedCourses);
+    setTeacherGrades(selectedGrades);
+  }, [selectedGrades, SelectedCourses]);
+  //  ################### handle SlectedOptions of Grades multiple in form of array ########################
+  const handleSelectChange = (event) => {
+    const selectedOption = event.target.value;
+    setSelectedGrades((prevOptions) => {
+      if (!prevOptions.includes(selectedOption)) {
+        return [...prevOptions, selectedOption];
+      } else {
+        return prevOptions;
       }
-    };
+    });
+  };
 
-    const handleSelectCourse = (event) => {
-      const selectedCourse = event.target.value;
-      if (!SelectedCourses.includes(selectedCourse)) {
-        setSelectedCourses([...SelectedCourses, selectedCourse]);
+  //  ################### handle SlectedCourses multiple in form of array ########################
+  const handleSelectCourse = (event) => {
+    const selectedCourse = event.target.value;
+    setSelectedCourses((prevCourses) => {
+      if (!prevCourses.includes(selectedCourse)) {
+        return [...prevCourses, selectedCourse];
+      } else {
+        return prevCourses;
       }
-    };
-    
-    const removeCourse = (course) => {
-      setSelectedCourses(SelectedCourses.filter((item) => item !== course));
-    };
-    
-    const removeOption = (option) => {
-      setSelectedOptions(selectedOptions.filter((item) => item !== option));
-    };
+    });
+  };
+
+  const removeCourse = (course) => {
+    setSelectedCourses(SelectedCourses.filter((item) => item !== course));
+  };
+
+  const removeOption = (option) => {
+    setSelectedGrades(selectedGrades.filter((item) => item !== option));
+  };
   return (
-    <div className='md:px-8 mt-4'>
-      { userRole  === "Admin" ?(
-        
-<form onSubmit={handlesubmitt} className="text-gray-600 body-font relative">
-  <div className="">
-    <div className="flex flex-col text-center w-full mb-2">
-      <h1 className="sm:text-3xl text-2xl font-medium teacherName-font  text-gray-900">Add Teacher</h1>
-      
-    </div>
-    <div className=" ">
-      <div className=" ">
-        <div className="md:flex justify-between   ">
-          <div className="md:w-[45%]">
-            <label htmlFor="teacherName" className="leading-7 text-sm text-gray-600">Teacher Name</label>
-            <input type="text" id="teacherName" name="teacherName" className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" required onChange={handlechange} />
-          </div>
-          <div className="md:w-[45%]">
-            <label htmlFor="teacherEmail"  className="leading-7 text-sm text-gray-600">Teacher Email</label>
-            <input  id="teacherEmail"  name="teacherEmail" className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" onChange={handlechange}/>
-          </div>
-        
-        </div>
-        <div className="md:flex justify-between ">
-        <div className="md:w-[45%]">
-            <label htmlFor="teachersGrade" className="leading-7 text-sm text-gray-600">Teacher Grades</label>
-           
-            <div>
-      <select
-        id="grades"
-        name='teacherGrades'
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-purple-500 dark:focus:border-purple-500"
-        onChange={handleSelectChange}
-        value=""
+    <div className="md:px-8 mt-4">
+      <Toaster />
+      <form
+        onSubmit={addTeacherDataSendHandler}
+        className="text-gray-600 body-font relative"
       >
-        <option selected disabled value="">Select</option>
-        <option value="Home and Furniture">Home and Furniture</option>
-        <option value="Sports and Fitness">Sports and Fitness</option>
-        <option value="Health ">Health </option>
-        <option value="Wellness"> Wellness</option>
-        <option value="Well"> Well</option>
-        {/* Add other options */}
-      </select>
-      
-      <div>
-        {selectedOptions.map((option, index) => (
-          <div key={index} className="inline-block bg-gray-100 text-gray-800 rounded-md px-2 py-1 mr-2 mt-2">
-            {option}
-            <button onClick={() => removeOption(option)} className="ml-2">&times;</button>
+        <div className="">
+          <div className="flex flex-col text-center w-full mb-2">
+            <h1 className="sm:text-3xl text-2xl font-medium teacherName-font  text-gray-900">
+              Add Teacher
+            </h1>
           </div>
-        ))}
-      </div>
+          <div className=" ">
+            <div className=" ">
+              <div className="md:flex justify-between   ">
+                <div className="md:w-[45%]">
+                  <label
+                    htmlFor="teacherName"
+                    className="leading-7 text-sm text-gray-600"
+                  >
+                    Teacher Name
+                  </label>
+                  <input
+                    type="text"
+                    id="teacherName"
+                    name="teacherName"
+                    className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                    onChange={(e) => setTeacherName(e.target.value)}
+                  />
+                </div>
+                <div className="md:w-[45%]">
+                  <label
+                    htmlFor="teacherEmail"
+                    className="leading-7 text-sm text-gray-600"
+                  >
+                    Teacher Email
+                  </label>
+                  <input
+                    id="teacherEmail"
+                    name="teacherEmail"
+                    className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                    onChange={(e) => setTeacherEmail(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="md:flex justify-between ">
+                <div className="md:w-[45%]">
+                  <label
+                    htmlFor="teachersGrade"
+                    className="leading-7 text-sm text-gray-600"
+                  >
+                    Teacher Grades
+                  </label>
+
+                  <div>
+                    <select
+                      id="grades"
+                      name="teacherGrades"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-purple-500 dark:focus:border-purple-500"
+                      onChange={handleSelectChange}
+                      value=""
+                    >
+                      <option selected disabled value="">
+                        Select
+                      </option>
+                      {grades && Array.isArray(grades)
+                        ? grades.map((grade) => (
+                            <option value={grade?._id}>
+                              {"Grade " + grade?.gradeCategory}
+                            </option>
+                          ))
+                        : ""}
+                    </select>
+
+                    <div>
+                      {selectedGrades.map((option, index) => (
+                        <div
+                          key={index}
+                          className="inline-block bg-gray-100 text-gray-800 rounded-md px-2 py-1 mr-2 mt-2"
+                        >
+                          {option}
+                          <button
+                            onClick={() => removeOption(option)}
+                            className="ml-2"
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="md:w-[45%]">
+                  <label
+                    htmlFor="teacherPassword"
+                    className="leading-7 text-sm text-gray-600"
+                  >
+                    Teacher Password
+                  </label>
+                  <input
+                    id="teacherPassword"
+                    name="teacherPassword"
+                    type="password"
+                    className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                    onChange={(e) => setTeacherPassword(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="md:flex justify-between ">
+                <div className="md:w-[45%] ">
+                  <label
+                    htmlFor="teacherSalary"
+                    className="leading-7 text-sm text-gray-600"
+                  >
+                    Teacher Salary
+                  </label>
+                  <input
+                    type="text"
+                    id="teacherSalary"
+                    name="teacherSalary"
+                    className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                    onChange={(e) => setTeacherSalary(e.target.value)}
+                  />
+                </div>
+                <div className="md:w-[45%] ">
+                  <label
+                    htmlFor="teacherIdCardno"
+                    className="leading-7 text-sm text-gray-600"
+                  >
+                    Teacher Id Card no
+                  </label>
+                  <input
+                    type="text"
+                    id="teacherIdCardno"
+                    name="teacherIdCardno"
+                    className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                    onChange={(e) => setTeacherIdCardNumber(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="md:flex justify-between ">
+                <div className="md:w-[45%]">
+                  <label
+                    htmlFor="teachersCourses"
+                    className="leading-7 text-sm text-gray-600"
+                  >
+                    Teacher Courses
+                  </label>
+
+                  <div>
+                    <select
+                      id="courses"
+                      name="teacherCourses"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-purple-500 dark:focus:border-purple-500"
+                      onChange={handleSelectCourse}
+                      value=""
+                    >
+                      <option selected disabled value="">
+                        Select
+                      </option>
+                      {courses && Array.isArray(courses)
+                        ? courses.map((course) => (
+                            <option value={course?._id}>
+                              {course?.courseTitle}
+                            </option>
+                          ))
+                        : ""}
+                    </select>
+
+                    <div>
+                      {SelectedCourses.map((option, index) => (
+                        <div
+                          key={index}
+                          className="inline-block bg-gray-100 text-gray-800 rounded-md px-2 py-1 mr-2 mt-2"
+                        >
+                          {option}
+                          <button
+                            onClick={() => removeCourse(option)}
+                            className="ml-2"
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="md:w-[45%] ">
+                  <label
+                    htmlFor="teacherJobDate"
+                    className="leading-7 text-sm text-gray-600"
+                  >
+                    Teacher Job Date
+                  </label>
+                  <input
+                    id="teacherJobDate"
+                    name="teacherJobDate"
+                    className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                    onChange={(e) => setTeacherJobDate(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="md:flex justify-between ">
+                <div className="md:w-[45%] ">
+                  <label
+                    htmlFor="teacherAvatar"
+                    className="leading-7 text-sm text-gray-600"
+                  >
+                    Teacher Avatar
+                  </label>
+                  <input
+                    type="file"
+                    className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                    onChange={(e) => setTeacherAvatar(e.target.files[0])}
+                  />
+                </div>
+                <div className="md:w-[45%] ">
+                  <label
+                    htmlFor="teacherIdCardCopy"
+                    className="leading-7 text-sm text-gray-600"
+                  >
+                    Teacher Id Card Copy
+                  </label>
+                  <input
+                    type="file"
+                    className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                    onChange={(e) => setTeacherIdCardCopy(e.target.files[0])}
+                  />
+                </div>
+              </div>
+              <div className="p-2 w-full mt-4">
+                <button
+                  className="flex mx-auto text-white bg-[#40b08c] border-0 py-1 px-4 focus:outline-none hover:bg-[#75dbbb] rounded text-lg"
+                  type="submit"
+                >
+                  Add Course
+                </button>
+              </div>
+              <div className="p-2 w-full    text-center"></div>
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
-
-          </div>
-          <div className="md:w-[45%]">
-            <label htmlFor="stock" className="leading-7 text-sm text-gray-600">Teacher Password</label>
-            <input   id="stock" name="stock" className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" onChange={handlechange}/>
-          </div>
-        </div>
-        <div className="md:flex justify-between ">
-          <div className="md:w-[45%] ">
-            <label htmlFor="teacherSalary" className="leading-7 text-sm text-gray-600">Teacher Salary</label>
-            <input type="text"  id="teacherSalary" name="teacherSalary" className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" onChange={handlechange}/>
-          </div>
-          <div className="md:w-[45%] ">
-            <label htmlFor="teacherIdCardno" className="leading-7 text-sm text-gray-600">Teacher Id Card no</label>
-            <input type="text"  id="teacherIdCardno" name="teacherIdCardno" className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" onChange={handlechange}/>
-          </div>
-          
-          
-         
-        </div>
-       <div className="md:flex justify-between ">
-     
-       <div className="md:w-[45%]">
-            <label htmlFor="teachersGrade" className="leading-7 text-sm text-gray-600">Teacher Grades</label>
-           
-            <div>
-      <select
-        id="grades"
-        name='teacherGrades'
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-purple-500 dark:focus:border-purple-500"
-        onChange={handleSelectCourse}
-        value=""
-      >
-        <option selected disabled value="">Select</option>
-        <option value="Home and Furniture">Home and Furniture</option>
-        <option value="Sports and Fitness">Sports and Fitness</option>
-        <option value="Health ">Health </option>
-        <option value="Wellness"> Wellness</option>
-        <option value="Well"> Well</option>
-        {/* Add other options */}
-      </select>
-      
-      <div>
-        {SelectedCourses.map((option, index) => (
-          <div key={index} className="inline-block bg-gray-100 text-gray-800 rounded-md px-2 py-1 mr-2 mt-2">
-            {option}
-            <button onClick={() => removeCourse(option)} className="ml-2">&times;</button>
-          </div>
-        ))}
-      </div>
-    </div>
-
-          </div>
-          <div className="md:w-[45%] ">
-            <label htmlFor="description" className="leading-7 text-sm text-gray-600">Teacher Job Date</label>
-            <input  id="teacherJobDate" name="teacherJobDate" className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" onChange={handlechange}/>
-          </div>
-        
-        </div>
-        <div className="p-2 w-full mt-4">
-          <button className="flex mx-auto text-white bg-[#40b08c] border-0 py-1 px-4 focus:outline-none hover:bg-[#75dbbb] rounded text-lg" type='submit'>Add Course</button>
-        </div>
-        <div className="p-2 w-full    text-center">
-        </div>
-      </div>
-    </div>
-  </div>
-</form>
-      ):(
-        <h1>You need to login as supplier...</h1>
-      )
-      }
-    </div>
-  )
-}
-
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
- 
+  );
+};
