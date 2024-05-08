@@ -4,6 +4,7 @@ const intialState = {
   isLoading: false,
   currentAdminData: null,
   error: null,
+  isAdminAuthenticated: false,
 };
 
 const loadCurrentAdminReducer = createReducer(intialState, (builder) => {
@@ -13,6 +14,7 @@ const loadCurrentAdminReducer = createReducer(intialState, (builder) => {
   builder.addCase("LoadAdminRequestSuccess", (state, action) => {
     state.isLoading = false;
     state.currentAdminData = action.payload;
+    state.isAdminAuthenticated = true;
   });
   builder.addCase("LoadAdminRequestFailure", (state, action) => {
     state.isLoading = false;

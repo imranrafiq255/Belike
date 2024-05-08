@@ -6,6 +6,7 @@ import {
   handleShowFailureToast,
   handleShowSuccessToast,
 } from "../../ToastMessages/ToastMessage";
+import ThreeDotLoader from "../../Loaders/ThreeDotLoader";
 
 export const AdminAddGrade = () => {
   const [courses, setCourses] = useState(null);
@@ -15,6 +16,7 @@ export const AdminAddGrade = () => {
   const [gradeSchoolTiming, setGradeSchoolTiming] = useState("");
   const [gradeIncharge, setGradeIncharge] = useState("");
   const [teachers, setAllTeachers] = useState(null);
+  const [loading, setLoading] = useState(false);
   const {
     register,
     formState: { errors },
@@ -81,15 +83,18 @@ export const AdminAddGrade = () => {
       };
       const sendGradeData = async () => {
         try {
+          setLoading(true);
           const response = await axios.post("/api/v1/admin/add-grade", data);
           handleShowSuccessToast(response.data.message);
           console.log(response.data.message);
           setGradeCategory("");
           setGradeRoomNumber("");
           setGradeSchoolTiming("");
+          setLoading(false);
         } catch (error) {
           handleShowFailureToast(error.response.data.message);
           console.log(error.response.data.message);
+          setLoading(false);
         }
       };
       sendGradeData();
@@ -123,6 +128,7 @@ export const AdminAddGrade = () => {
                     type="text"
                     id="gradeCategory"
                     name="gradeCategory"
+                    value={gradeCategory}
                     placeholder="Enter unique grade catogory"
                     className={`w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
                     onChange={(e) => setGradeCategory(e.target.value)}
@@ -185,6 +191,7 @@ export const AdminAddGrade = () => {
                     type="text"
                     id="gradeRoomNumber"
                     name="gradeRoomNumber"
+                    value={gradeRoomNumber}
                     placeholder="Enter unqiue grade room number"
                     className={`w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
                     onChange={(e) => setGradeRoomNumber(e.target.value)}
@@ -201,6 +208,7 @@ export const AdminAddGrade = () => {
                     type="text"
                     id="gradeSchoolTiming"
                     name="gradeSchoolTiming"
+                    value={gradeSchoolTiming}
                     placeholder="Monday-Saturday 8:00AM-2:00PM"
                     className={`w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
                     onChange={(e) => setGradeSchoolTiming(e.target.value)}
@@ -242,10 +250,10 @@ export const AdminAddGrade = () => {
               <div className="p-2 w-full mt-4">
                 <button
                   onClick={addGradeDataSendHandler}
-                  className="flex justify-center w-1/3 mx-auto text-white bg-[#40b08c] border-0 py-1 px-4 focus:outline-none hover:bg-[#75dbbb] rounded text-lg"
+                  className="flex justify-center w-1/3 mx-auto text-white bg-[#40b08c] border-0 py-1 px-4 focus:outline-none hover:bg-[#75dbbb] rounded text-lg items-center"
                   type="submit"
                 >
-                  Add Grade
+                  {loading ? <ThreeDotLoader /> : "Add Grade"}
                 </button>
               </div>
               <div className="p-2 w-full text-center"></div>

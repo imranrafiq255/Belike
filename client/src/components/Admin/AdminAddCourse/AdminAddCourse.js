@@ -5,7 +5,8 @@ import {
   handleShowFailureToast,
   handleShowSuccessToast,
 } from "../../ToastMessages/ToastMessage";
-
+import ThreeDotLoader from "../../../components/Loaders/ThreeDotLoader";
+import { Toaster } from "react-hot-toast";
 export const AddCourse = () => {
   const {
     register,
@@ -15,6 +16,7 @@ export const AddCourse = () => {
   const [courseTitle, setCourseTitle] = useState("");
   const [courseTimeTable, setCousreTimeTable] = useState("");
   const [courseTeacher, setCourseTeacher] = useState("");
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchAllTeachers = async () => {
       try {
@@ -35,6 +37,7 @@ export const AddCourse = () => {
       };
       const sendCourseData = async () => {
         try {
+          setLoading(true);
           const response = await axios.post(
             `/api/v1/admin/add-course/${courseTeacher}`,
             data
@@ -42,9 +45,12 @@ export const AddCourse = () => {
           handleShowSuccessToast(response.data.message);
           console.log(response.data.message);
           setCourseTitle("");
+          setCousreTimeTable("");
+          setLoading(false);
         } catch (error) {
           handleShowFailureToast(error.response.data.message);
           console.log(error.response.data.message);
+          setLoading(false);
         }
       };
       sendCourseData();
@@ -53,6 +59,7 @@ export const AddCourse = () => {
 
   return (
     <div className="md:px-8 mt-4">
+      <Toaster />
       <form
         onSubmit={sendCourseDataHandler}
         className="text-gray-600 body-font relative"
@@ -76,6 +83,7 @@ export const AddCourse = () => {
                   <input
                     type="text"
                     id="courseTitle"
+                    value={courseTitle}
                     onChange={(e) => setCourseTitle(e.target.value)}
                     placeholder="Enter unique course title"
                     className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
@@ -126,8 +134,9 @@ export const AddCourse = () => {
                   </label>
                   <input
                     type="courseTimetable"
-                    placeholder="dd / mm / time: am/pm"
+                    placeholder="Monday and Friday 9:00AM to 10:00AM"
                     id="courseTimetable"
+                    value={courseTimeTable}
                     onChange={(e) => setCousreTimeTable(e.target.value)}
                     className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                   />
@@ -138,12 +147,12 @@ export const AddCourse = () => {
                   )}
                 </div>
               </div>
-              <div className="p-2 w-full mt-4">
+              <div className="p-2 mt-4 w-full">
                 <button
-                  className="w-1/3 justify-centerflex mx-auto text-white bg-[#40b08c] border-0 py-1 px-4 focus:outline-none hover:bg-[#75dbbb] rounded text-lg"
+                  className="w-1/3 justify-centerflex mx-auto text-white bg-[#40b08c] border-0 py-1 px-4 focus:outline-none hover:bg-[#75dbbb] rounded text-lg flex justify-center items-center"
                   type="submit"
                 >
-                  Add Course
+                  {loading ? <ThreeDotLoader /> : "Add Course"}
                 </button>
               </div>
               <div className="p-2 w-full text-center"></div>

@@ -6,17 +6,30 @@ import { AdminAddStudent } from "./AdminAddStudent/AdminAddStudent";
 import { AdminAddGrade } from "./AdminAddGrade/AdminAddGrade";
 import { useDispatch, useSelector } from "react-redux";
 import loadCurrentAdminAction from "../../components/Redux/Admin/Actions/loadCurrentAdminAction.Admin";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { handleShowFailureToast } from "../ToastMessages/ToastMessage";
 function AdminDashboard() {
   const [activeComponent, setActiveComponent] = useState("AdminAddTeacher");
   const [Admin, setAdmin] = useState(true);
   const [Showmenu, setShowmenu] = useState(false);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(loadCurrentAdminAction());
   }, []);
 
   const { currentAdminData } = useSelector((state) => state.currentAdminData);
-  console.log(currentAdminData);
+  const adminLogoutHandler = async () => {
+    try {
+      const response = await axios.get("/api/v1/admin/logout");
+      console.log(response.data.message);
+      navigate("/admin-login");
+    } catch (error) {
+      handleShowFailureToast(error.response.data.message);
+      console.log(error.response.data.message);
+    }
+  };
   return (
     <div className="relative h-[100vh]">
       {Admin ? (
@@ -156,7 +169,7 @@ function AdminDashboard() {
               </li>
             </ul>
             <div>
-              <button>Signout</button>
+              <button onClick={adminLogoutHandler}>Signout</button>
             </div>
           </div>
 

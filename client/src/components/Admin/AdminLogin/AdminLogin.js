@@ -10,6 +10,11 @@ import img2 from "../../../Assets/bgstudent-2.jpg";
 import img3 from "../../../Assets/bgstudent-3.jpeg";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import {
+  handleShowFailureToast,
+  handleShowSuccessToast,
+} from "../../ToastMessages/ToastMessage";
+import { Toaster } from "react-hot-toast";
 const AdminLogin = () => {
   const {
     control,
@@ -67,15 +72,18 @@ const AdminLogin = () => {
         adminEmail: data?.email,
         adminPassword: data?.password,
       });
+      handleShowSuccessToast(response.data.message);
       console.log(response.data);
-      navigate("/");
+      navigate("/admin-dashboard");
     } catch (error) {
       console.log(error.response.data.message);
+      handleShowFailureToast(error.response.data.message);
     }
   };
 
   return (
     <div className="relative flex overflow-hidden  justify-center items-center bg-transparent  h-[100vh]">
+      <Toaster />
       <div className="w-[100%] md:block md:w-[60%]  h-full">
         <Slider {...settings} appendDots={appendDots} className=" h-full">
           <div

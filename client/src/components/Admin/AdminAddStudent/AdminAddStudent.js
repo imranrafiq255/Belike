@@ -5,7 +5,8 @@ import {
   handleShowSuccessToast,
 } from "../../ToastMessages/ToastMessage";
 import axios from "axios";
-
+import { Toaster } from "react-hot-toast";
+import ThreeDotLoader from "../../Loaders/ThreeDotLoader";
 export const AdminAddStudent = () => {
   const [studentName, setStudentName] = useState("");
   const [studentEmail, setStudentEmail] = useState("");
@@ -18,7 +19,7 @@ export const AdminAddStudent = () => {
   const [studentGrade, setStudentGrade] = useState("");
   const [courses, setCourses] = useState(null);
   const [grades, setGrades] = useState(null);
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchAllGrades = async () => {
       try {
@@ -68,6 +69,7 @@ export const AdminAddStudent = () => {
       };
       const sendStudentDataToDatabase = async () => {
         try {
+          setLoading(true);
           const response = await axios.post(
             `/api/v1/admin/add-student/${studentGrade}`,
             data,
@@ -79,9 +81,16 @@ export const AdminAddStudent = () => {
           );
           console.log(response.data.message);
           handleShowSuccessToast(response.data.message);
+          setLoading(false);
+          setStudentName("");
+          setStudentEmail("");
+          setStudentPassword("");
+          setStudentId("");
+          setStudentIdCardNumber("");
         } catch (error) {
           console.log(error.response.data.message);
           handleShowFailureToast(error.response.data.message);
+          setLoading(false);
         }
       };
       sendStudentDataToDatabase();
@@ -114,6 +123,7 @@ export const AdminAddStudent = () => {
 
   return (
     <div className="md:px-8 mt-4">
+      <Toaster />
       <form
         onSubmit={addStudentDataHandler}
         className="text-gray-600 body-font relative"
@@ -138,6 +148,7 @@ export const AdminAddStudent = () => {
                     type="text"
                     id="studentName"
                     name="studentName"
+                    value={studentName}
                     placeholder="Enter student name"
                     className={`w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
                     onChange={(e) => setStudentName(e.target.value)}
@@ -153,6 +164,8 @@ export const AdminAddStudent = () => {
                   <input
                     id="studentEmail"
                     name="studentEmail"
+                    placeholder="Enter student email"
+                    value={studentEmail}
                     className={`w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
                     onChange={(e) => setStudentEmail(e.target.value)}
                   />
@@ -169,6 +182,8 @@ export const AdminAddStudent = () => {
                   <input
                     type="password"
                     id="studentPassword"
+                    value={studentPassword}
+                    placeholder="Enter student password"
                     name="studentPassword"
                     className={`w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
                     onChange={(e) => setStudentPassword(e.target.value)}
@@ -225,12 +240,14 @@ export const AdminAddStudent = () => {
                     htmlFor="studentIdCardno"
                     className="leading-7 text-sm text-gray-600"
                   >
-                    Student Id Card no
+                    Student Id Card Number
                   </label>
                   <input
                     type="text"
                     id="studentIdCardno"
                     name="studentIdCardno"
+                    placeholder="Enter unique student id card number"
+                    value={studentIdCardNumber}
                     className={`w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
                     onChange={(e) => setStudentIdCardNumber(e.target.value)}
                   />
@@ -271,6 +288,8 @@ export const AdminAddStudent = () => {
                     type="studentId"
                     id="studentId"
                     name="studentId"
+                    value={studentId}
+                    placeholder="Enter unqiue student id"
                     className={`w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
                     onChange={(e) => setStudentId(e.target.value)}
                   />
@@ -314,7 +333,7 @@ export const AdminAddStudent = () => {
                   className="w-1/2 flex justify-center mx-auto text-white bg-[#40b08c] border-0 py-1 px-4 focus:outline-none hover:bg-[#75dbbb] rounded text-lg"
                   type="submit"
                 >
-                  Add Student
+                  {loading ? <ThreeDotLoader /> : "Add Student"}
                 </button>
               </div>
             </div>

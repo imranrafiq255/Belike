@@ -4,6 +4,7 @@ const intialState = {
   isLoading: false,
   currentStudentData: null,
   error: null,
+  isStudentAuthenticated: false,
 };
 
 const loadCurrentStudentReducer = createReducer(intialState, (builder) => {
@@ -13,6 +14,7 @@ const loadCurrentStudentReducer = createReducer(intialState, (builder) => {
   builder.addCase("LoadStudentRequestSuccess", (state, action) => {
     state.isLoading = false;
     state.currentStudentData = action.payload;
+    state.isStudentAuthenticated = true;
   });
   builder.addCase("LoadStudentRequestFailure", (state, action) => {
     state.isLoading = false;

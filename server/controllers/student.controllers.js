@@ -209,14 +209,19 @@ exports.loadCurrentStudent = async (req, res) => {
       .findOne({
         _id: req?.currentStudent,
       })
-      .populate("studentGrade");
-    if (!currentStudent) {
-      res.clearCookie("studentToken");
-      return res.status(404).json({
-        statusCode: STATUS_CODES[404],
-        message: "Student not found in database, please login again",
+      .populate({
+        path: "studentGrade",
+      })
+      .populate({
+        path: "studentCourses",
+        populate: {
+          path: "courseId",
+          populate: {
+            path: "courseTeacher",
+          },
+        },
       });
-    }
+
     return res.status(200).json({
       statusCode: STATUS_CODES[200],
       currentStudent,

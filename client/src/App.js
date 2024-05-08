@@ -13,11 +13,39 @@ import TeacherTakeAttendance from "./components/Teacher/TeacherAttendance/Teache
 import TeacherViewAttendance from "./components/Teacher/TeacherAttendance/TeacherViewAttendance";
 import { AddCourse } from "./components/Admin/AdminAddCourse/AdminAddCourse";
 import StudentDashboard from "./components/Student/StudentDashboard";
-
 import StudentViewProfile from "./components/Student/StudentViewSubjects/StudentViewProfile";
-
-
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import loadCurrentStudentAction from "./components/Redux/Student/Actions/loadCurrentStudentAction.Student";
+import RingLoader from "./components/Loaders/RingLoader";
+import loadCurrentAdminAction from "./components/Redux/Admin/Actions/loadCurrentAdminAction.Admin";
 function App() {
+  const dispatch = useDispatch();
+  const [studentLoading, setStudentLoading] = useState(true);
+  const [adminLoading, setAdminLoading] = useState(true);
+  useEffect(() => {
+    dispatch(loadCurrentStudentAction())
+      .then(() => setStudentLoading(false))
+      .catch((error) => {
+        setStudentLoading(false);
+      });
+    dispatch(loadCurrentAdminAction())
+      .then(() => setAdminLoading(false))
+      .catch((error) => setAdminLoading(false));
+  }, []);
+  const { isStudentAuthenticated } = useSelector(
+    (state) => state.currentStudentData
+  );
+  const { isAdminAuthenticated } = useSelector(
+    (state) => state.currentAdminData
+  );
+  if (studentLoading || adminLoading) {
+    return (
+      <div className="w-screen h-screen flex justify-center items-center">
+        <RingLoader />
+      </div>
+    );
+  }
   return (
     <>
       <BrowserRouter>
@@ -29,11 +57,22 @@ function App() {
           <Route path="/student-login" element={<Login />} />
           <Route path="/admin-add-course" element={<AddCourse />} />
           {/* <Route path="/SchoolPortalHome" element={ <SchoolPortalHome/>}/> */}
-          <Route path="/" element={<AdminDashboard />} />
+          <Route
+            path="/admin-dashboard"
+            element={isAdminAuthenticated ? <AdminDashboard /> : <AdminLogin />}
+          />
           <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
-         
-          <Route path="/student-dashbaord" element={<StudentDashboard/>} />
-          <Route path="/student-view-profile" element={<StudentViewProfile/>} />
+
+          <Route
+            path="/student-dashboard"
+            element={isStudentAuthenticated ? <StudentDashboard /> : <Login />}
+          />
+          <Route
+            path="/student-view-profile"
+            element={
+              isStudentAuthenticated ? <StudentViewProfile /> : <Login />
+            }
+          />
           <Route
             path="/student-view-attendance"
             element={<StudentViewAtttendance />}
@@ -45,8 +84,7 @@ function App() {
           <Route
             path="/teacher-view-attendance"
             element={<TeacherViewAttendance />}
-          /> 
-          
+          />
         </Routes>
         {/* <Footer/> */}
       </BrowserRouter>

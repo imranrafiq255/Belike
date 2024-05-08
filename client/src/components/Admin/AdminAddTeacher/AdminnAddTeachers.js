@@ -6,6 +6,7 @@ import {
   handleShowSuccessToast,
 } from "../../ToastMessages/ToastMessage";
 import { Toaster } from "react-hot-toast";
+import ThreeDotLoader from "../../Loaders/ThreeDotLoader";
 export const AdminAddTeacher = () => {
   const [courses, setCourses] = useState(null);
   const [grades, setGrades] = useState(null);
@@ -19,6 +20,7 @@ export const AdminAddTeacher = () => {
   const [teacherGrades, setTeacherGrades] = useState([]);
   const [teacherCourses, setTeacherCourses] = useState([]);
   const [teacherName, setTeacherName] = useState([]);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchAllGrades = async () => {
       try {
@@ -76,6 +78,7 @@ export const AdminAddTeacher = () => {
       };
       const sendTeacherData = async () => {
         try {
+          setLoading(true);
           const response = await axios.post("/api/v1/admin/add-teacher", data, {
             headers: {
               "Content-Type": "multipart/form-data",
@@ -83,9 +86,17 @@ export const AdminAddTeacher = () => {
           });
           console.log(response.data.message);
           handleShowSuccessToast(response.data.message);
+          setLoading(false);
+          setTeacherEmail("");
+          setTeacherJobDate("");
+          setTeacherName("");
+          setTeacherIdCardNumber("");
+          setTeacherSalary("");
+          setTeacherPassword("");
         } catch (error) {
           console.log(error.response.data.message);
           handleShowFailureToast(error.response.data.message);
+          setLoading(false);
         }
       };
       sendTeacherData();
@@ -158,6 +169,8 @@ export const AdminAddTeacher = () => {
                     type="text"
                     id="teacherName"
                     name="teacherName"
+                    placeholder="Enter teacher name"
+                    value={teacherName}
                     className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                     onChange={(e) => setTeacherName(e.target.value)}
                   />
@@ -172,6 +185,8 @@ export const AdminAddTeacher = () => {
                   <input
                     id="teacherEmail"
                     name="teacherEmail"
+                    value={teacherEmail}
+                    placeholder="Enter teacher email"
                     className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                     onChange={(e) => setTeacherEmail(e.target.value)}
                   />
@@ -235,6 +250,8 @@ export const AdminAddTeacher = () => {
                     id="teacherPassword"
                     name="teacherPassword"
                     type="password"
+                    placeholder="Enter teacher password"
+                    value={teacherPassword}
                     className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                     onChange={(e) => setTeacherPassword(e.target.value)}
                   />
@@ -252,6 +269,8 @@ export const AdminAddTeacher = () => {
                     type="text"
                     id="teacherSalary"
                     name="teacherSalary"
+                    placeholder="Enter teacher salary"
+                    value={teacherSalary}
                     className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                     onChange={(e) => setTeacherSalary(e.target.value)}
                   />
@@ -261,12 +280,14 @@ export const AdminAddTeacher = () => {
                     htmlFor="teacherIdCardno"
                     className="leading-7 text-sm text-gray-600"
                   >
-                    Teacher Id Card no
+                    Teacher Id Card Number
                   </label>
                   <input
                     type="text"
                     id="teacherIdCardno"
                     name="teacherIdCardno"
+                    value={teacherIdCardNumber}
+                    placeholder="Enter teacher id card number"
                     className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                     onChange={(e) => setTeacherIdCardNumber(e.target.value)}
                   />
@@ -329,6 +350,8 @@ export const AdminAddTeacher = () => {
                   <input
                     id="teacherJobDate"
                     name="teacherJobDate"
+                    placeholder="10 May 2024"
+                    value={teacherJobDate}
                     className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                     onChange={(e) => setTeacherJobDate(e.target.value)}
                   />
@@ -364,10 +387,10 @@ export const AdminAddTeacher = () => {
               </div>
               <div className="p-2 w-full mt-4">
                 <button
-                  className="flex mx-auto text-white bg-[#40b08c] border-0 py-1 px-4 focus:outline-none hover:bg-[#75dbbb] rounded text-lg"
+                  className="flex w-1/3 mx-auto justify-center items-center text-white bg-[#40b08c] border-0 py-1 px-4 focus:outline-none hover:bg-[#75dbbb] rounded text-lg"
                   type="submit"
                 >
-                  Add Course
+                  {loading ? <ThreeDotLoader /> : "Add Course"}
                 </button>
               </div>
               <div className="p-2 w-full    text-center"></div>
