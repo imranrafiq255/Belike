@@ -164,7 +164,7 @@ function AdminDashboard() {
             <div className="text-center bg-gray-200 font-bold h-20 flex justify-between items-center p-4">
               <div className="flex justify-between items-center flex-wrap xl:w-[60%]">
                 <h1>{"Hello " + currentAdminData?.admin?.adminName + "!"}</h1>
-                <h1 className="mr-20">Admin Dashboard</h1>
+                <h1 className="mr-20 font-bold">Admin Dashboard</h1>
               </div>
               <img
                 src={currentAdminData?.admin?.adminAvatar}
