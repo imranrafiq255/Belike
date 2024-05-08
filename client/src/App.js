@@ -12,6 +12,10 @@ import StudentViewAtttendance from "./components/Student/StudentViewAttendance/S
 import TeacherTakeAttendance from "./components/Teacher/TeacherAttendance/TeacherTakeAttendance";
 import TeacherViewAttendance from "./components/Teacher/TeacherAttendance/TeacherViewAttendance";
 import { AddCourse } from "./components/Admin/AdminAddCourse/AdminAddCourse";
+import StudentDashboard from "./components/Student/StudentDashboard";
+
+import StudentViewProfile from "./components/Student/StudentViewSubjects/StudentViewProfile";
+
 
 function App() {
   return (
@@ -27,6 +31,9 @@ function App() {
           {/* <Route path="/SchoolPortalHome" element={ <SchoolPortalHome/>}/> */}
           <Route path="/" element={<AdminDashboard />} />
           <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
+         
+          <Route path="/student-dashbaord" element={<StudentDashboard/>} />
+          <Route path="/student-view-profile" element={<StudentViewProfile/>} />
           <Route
             path="/student-view-attendance"
             element={<StudentViewAtttendance />}
@@ -38,7 +45,8 @@ function App() {
           <Route
             path="/teacher-view-attendance"
             element={<TeacherViewAttendance />}
-          />
+          /> 
+          
         </Routes>
         {/* <Footer/> */}
       </BrowserRouter>
