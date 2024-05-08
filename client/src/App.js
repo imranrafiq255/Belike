@@ -10,6 +10,8 @@ import Login from "./components/Student/StudentLogin/Login.Student";
 import TeacherLogin from "./components/Teacher/TeacherLogin/TeacherLogin";
 import StudentViewAtttendance from "./components/Student/StudentViewAttendance/StudentViewAtttendance";
 import TeacherTakeAttendance from "./components/Teacher/TeacherAttendance/TeacherTakeAttendance";
+import TeacherViewAttendance from "./components/Teacher/TeacherAttendance/TeacherViewAttendance";
+import { AddCourse } from "./components/Admin/AdminAddCourse/AdminAddCourse";
 
 function App() {
   return (
@@ -21,6 +23,7 @@ function App() {
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/teacher-login" element={<TeacherLogin />} />
           <Route path="/student-login" element={<Login />} />
+          <Route path="/admin-add-course" element={<AddCourse />} />
           {/* <Route path="/SchoolPortalHome" element={ <SchoolPortalHome/>}/> */}
           <Route path="/" element={<AdminDashboard />} />
           <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
@@ -31,6 +34,10 @@ function App() {
           <Route
             path="/teacher-take-attendance"
             element={<TeacherTakeAttendance />}
+          />
+          <Route
+            path="/teacher-view-attendance"
+            element={<TeacherViewAttendance />}
           />
         </Routes>
         {/* <Footer/> */}

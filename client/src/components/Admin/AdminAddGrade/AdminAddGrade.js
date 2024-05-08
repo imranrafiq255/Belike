@@ -84,6 +84,9 @@ export const AdminAddGrade = () => {
           const response = await axios.post("/api/v1/admin/add-grade", data);
           handleShowSuccessToast(response.data.message);
           console.log(response.data.message);
+          setGradeCategory("");
+          setGradeRoomNumber("");
+          setGradeSchoolTiming("");
         } catch (error) {
           handleShowFailureToast(error.response.data.message);
           console.log(error.response.data.message);
@@ -120,6 +123,7 @@ export const AdminAddGrade = () => {
                     type="text"
                     id="gradeCategory"
                     name="gradeCategory"
+                    placeholder="Enter unique grade catogory"
                     className={`w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
                     onChange={(e) => setGradeCategory(e.target.value)}
                   />
@@ -181,6 +185,7 @@ export const AdminAddGrade = () => {
                     type="text"
                     id="gradeRoomNumber"
                     name="gradeRoomNumber"
+                    placeholder="Enter unqiue grade room number"
                     className={`w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
                     onChange={(e) => setGradeRoomNumber(e.target.value)}
                   />
@@ -196,6 +201,7 @@ export const AdminAddGrade = () => {
                     type="text"
                     id="gradeSchoolTiming"
                     name="gradeSchoolTiming"
+                    placeholder="Monday-Saturday 8:00AM-2:00PM"
                     className={`w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
                     onChange={(e) => setGradeSchoolTiming(e.target.value)}
                   />

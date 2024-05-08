@@ -35,7 +35,7 @@ Router.route("/take-attendance/:grade_id").post(
   isTeacherAuthenticated,
   takeAttendance
 );
-Router.route("/view-grade-attendance/:grade_id").get(
+Router.route("/view-grade-attendance").get(
   isTeacherAuthenticated,
   viewGradeAttendance
 );
