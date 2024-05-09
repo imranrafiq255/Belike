@@ -14,8 +14,9 @@ import {
 } from "../../ToastMessages/ToastMessage";
 import { Toaster } from "react-hot-toast";
 import axios from "axios";
-
+import { useNavigate } from "react-router-dom";
 const TeacherLogin = () => {
+  const navigate = useNavigate();
   const {
     control,
     handleSubmit,
@@ -73,6 +74,7 @@ const TeacherLogin = () => {
         teacherPassword: data.password,
       });
       handleShowSuccessToast(response.data.message);
+      navigate("/teacher-dashboard");
     } catch (error) {
       handleShowFailureToast(error.response.data.message);
     }
