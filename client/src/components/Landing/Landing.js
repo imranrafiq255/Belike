@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 
 
 import "./Landing.css"
-
+import Footer from "../Footer/Footer.js"
+import Navbar from "../Navbar/Navbar.js"
 import heroimg from "../../Assets/hero-section-img.png"
 import schoolimg from "../../Assets/school.png"
 import collegeimg from "../../Assets/college.png"
@@ -22,6 +23,7 @@ const Landingpage = () => {
 
   return (
     <>
+    <Navbar/>
      <div className=' '>
 
       {/* Navbar Menu */}
@@ -55,7 +57,7 @@ const Landingpage = () => {
 <div className='flex flex-col justify-center items-center mt-8' id='servicesSection'>
       <h1 className='text-[#40b08c] text-5xl font-bold'>Services</h1>
       <div className='  flex flex-wrap justify-center gap-5 w-[85%] mt-4'>
-          <Link to={'/SchoolPortalHome'}>
+          <Link to={'/student-view-profile'}>
           <div className='servcard flex flex-col items-center'>
             <div className=' w-[10rem] h-[10rem]'>
               <img src={schoolimg} alt="" />
@@ -170,8 +172,8 @@ const Landingpage = () => {
     <div className='flex flex-col items-center mt-4 p-8'>
       <div className=' text-center'><h2 className='text-xl text-[#033e71]'>Belike Group services involve SEO, social media, PPC advertising, content marketing, and email campaigns. These strategies aim to boost online visibility, engage audiences, and drive business growth by leveraging various online platforms and analytics for optimization.</h2></div>
     </div>
-  
     </div>
+    <Footer/>
     </>
   );
 }

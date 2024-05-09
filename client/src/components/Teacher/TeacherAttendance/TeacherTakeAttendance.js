@@ -8,6 +8,7 @@ import {
 } from "../../ToastMessages/ToastMessage";
 import { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import TeacherDashboard from "../TeacherDashboard";
 const TeacherTakeAttendance = () => {
   const dispatch = useDispatch();
   const [attendance, setAttendance] = useState([]);
@@ -88,8 +89,11 @@ const TeacherTakeAttendance = () => {
     return new Date(date).getMonth() + 1;
   };
   return (
-    <div className="">
+    <div className="h-[100vh]">
+    <div className="grid grid-cols-6 h-full">
       <Toaster />
+        <TeacherDashboard/>
+        <div className="col-span-5 ">
       <div className="flex flex-col overflow-x-auto">
         <div className="sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
@@ -193,7 +197,10 @@ const TeacherTakeAttendance = () => {
           Save Changes
         </button>
       </div>
-    </div>
+      </div>
+      </div>
+      </div>
+    
   );
 };
 

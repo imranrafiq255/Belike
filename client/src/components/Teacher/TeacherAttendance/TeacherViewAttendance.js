@@ -38,7 +38,11 @@ export default function TeacherViewAttendance() {
   };
 
   return (
-    <div>
+   
+      <div className="h-[100vh]">
+    <div className="grid grid-cols-6 h-full"></div>
+      <TeacherViewAttendance/>
+      <div className="col-span-5 ">
       <div className="flex flex-col overflow-x-auto">
         <div className="sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
@@ -100,7 +104,9 @@ export default function TeacherViewAttendance() {
             </div>
           </div>
         </div>
+        </div>
+        </div>
       </div>
-    </div>
+ 
   );
 }

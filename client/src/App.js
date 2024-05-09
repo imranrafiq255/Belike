@@ -1,16 +1,18 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-// import { Footer } from "./components/Footer/Footer";
+
 // import Landingpage from "./components/Landing/Landing";
-// import Navbar from "./components/Navbar/Navbar";
+
 // import SchoolPortalHome from "./components/SchoolPortal/SchoolPortalHome/SchoolPortalHome";
 import AdminDashboard from "./components/Admin/AdminDashboard";
-import TeacherDashboard from "./components/Teacher/TeacherDashboard";
+// import TeacherDashboard from "./components/Teacher/TeacherDashboard.js";
 import AdminLogin from "./components/Admin/AdminLogin/AdminLogin";
 import Login from "./components/Student/StudentLogin/Login.Student";
 import TeacherLogin from "./components/Teacher/TeacherLogin/TeacherLogin";
 import StudentViewAtttendance from "./components/Student/StudentViewAttendance/StudentViewAtttendance";
+
 import TeacherTakeAttendance from "./components/Teacher/TeacherAttendance/TeacherTakeAttendance";
-import TeacherViewAttendance from "./components/Teacher/TeacherAttendance/TeacherViewAttendance";
+import TeacherViewAttendance from "./components/Teacher/TeacherAttendance/TeacherViewAttendance.js";
+
 import { AddCourse } from "./components/Admin/AdminAddCourse/AdminAddCourse";
 import StudentDashboard from "./components/Student/StudentDashboard";
 import StudentViewProfile from "./components/Student/StudentViewSubjects/StudentViewProfile";
@@ -19,6 +21,7 @@ import { useEffect, useState } from "react";
 import loadCurrentStudentAction from "./components/Redux/Student/Actions/loadCurrentStudentAction.Student";
 import RingLoader from "./components/Loaders/RingLoader";
 import loadCurrentAdminAction from "./components/Redux/Admin/Actions/loadCurrentAdminAction.Admin";
+import Landingpage from "./components/Landing/Landing";
 function App() {
   const dispatch = useDispatch();
   const [studentLoading, setStudentLoading] = useState(true);
@@ -49,11 +52,13 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        {/* <Navbar/> */}
+      
         <Routes>
-          {/* <Route path="/" element={<Landingpage/>}/> */}
+
+          <Route path="/" element={<Landingpage/>}/>
           <Route path="/admin-login" element={<AdminLogin />} />
           <Route path="/teacher-login" element={<TeacherLogin />} />
+          <Route path="/student-dashboard" element={<StudentDashboard />} />
           <Route path="/student-login" element={<Login />} />
           <Route path="/admin-add-course" element={<AddCourse />} />
           {/* <Route path="/SchoolPortalHome" element={ <SchoolPortalHome/>}/> */}
@@ -61,7 +66,7 @@ function App() {
             path="/admin-dashboard"
             element={isAdminAuthenticated ? <AdminDashboard /> : <AdminLogin />}
           />
-          <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
+        
 
           <Route
             path="/student-dashboard"
@@ -86,7 +91,7 @@ function App() {
             element={<TeacherViewAttendance />}
           />
         </Routes>
-        {/* <Footer/> */}
+        
       </BrowserRouter>
     </>
   );
