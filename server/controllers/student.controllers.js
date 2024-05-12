@@ -7,6 +7,14 @@ const resultModel = require("../models/result.models");
 const feedbackResponseModel = require("../models/feedbackResponse.models");
 const teacherModel = require("../models/teacher.models");
 const feedbackModel = require("../models/feedback.models");
+const {
+  startOfWeek,
+  endOfWeek,
+  startOfMonth,
+  endOfMonth,
+  startOfYear,
+  endOfYear,
+} = require("date-fns");
 exports.studentLogin = async (req, res) => {
   try {
     const { studentEmail, studentPassword } = req.body;
@@ -86,15 +94,46 @@ exports.viewAttendance = async (req, res) => {
         message: "Please login",
       });
     }
+
+    // Get the desired time range from req.query
+    const period = req.params.time_range;
+    let startDate, endDate;
+
+    // Determine the start and end dates based on the period
+    switch (period) {
+      case "weekly":
+        startDate = startOfWeek(new Date());
+        endDate = endOfWeek(new Date());
+        break;
+      case "monthly":
+        startDate = startOfMonth(new Date());
+        endDate = endOfMonth(new Date());
+        break;
+      case "yearly":
+        startDate = startOfYear(new Date());
+        endDate = endOfYear(new Date());
+        break;
+      default:
+        return res.status(400).json({
+          statusCode: STATUS_CODES[400],
+          message:
+            "Invalid period. Please specify 'weekly', 'monthly', or 'yearly'.",
+        });
+    }
+
+    // Fetch attendance data for the specific student within the specified time range
     const studentAttendance = await attendanceModel.find({
       "attendanceStudents.studentId": studentId,
+      attendanceDate: { $gte: startDate, $lte: endDate },
     });
+
     if (!studentAttendance || studentAttendance.length === 0) {
-      res.status(404).json({
+      return res.status(404).json({
         statusCode: STATUS_CODES[404],
-        message: `The student with id of: ${studentId} ,has no record in database with this id`,
+        message: `No attendance records found for the student with id: ${studentId} within the specified period.`,
       });
     }
+
     const attendanceData = studentAttendance
       .map((attendance) => {
         const studentData1 = attendance.attendanceStudents.find(
@@ -105,7 +144,6 @@ exports.viewAttendance = async (req, res) => {
       })
       .filter(Boolean);
 
-    console.log("Attendance Data:", attendanceData);
     return res.status(200).json({
       statusCode: STATUS_CODES[200],
       studentAttendance,
@@ -233,3 +271,27 @@ exports.loadCurrentStudent = async (req, res) => {
     });
   }
 };
+
+// exports.viewStudentCourses = async (req, res) => {
+//   try {
+//     const studentId = req?.currentStudent?._id;
+//     if (!studentId) {
+//       return res.status(404).json({
+//         statusCode: STATUS_CODES[401],
+//         message: "Please login!",
+//       });
+//     }
+//     const student = await studentModel.findOne({ _id: studentId });
+//     if (!student) {
+//       return res.status(404).json({
+//         statusCode: STATUS_CODES[404],
+//         message: "Student not found in database!",
+//       });
+//     }
+//   } catch (error) {
+//     res.status(500).json({
+//       statusCode: STATUS_CODES[500],
+//       message: error.message,
+//     });
+//   }
+// };

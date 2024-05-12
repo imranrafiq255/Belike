@@ -58,7 +58,7 @@ export const AdminAddTeacher = () => {
     ) {
       let Grades = [];
       teacherGrades.map((grade) => {
-        return Grades.push({ teacherId: grade });
+        return Grades.push({ gradeId: grade });
       });
       const Courses = [];
       teacherCourses.map((course) => {

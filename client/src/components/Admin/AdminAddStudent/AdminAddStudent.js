@@ -330,7 +330,7 @@ export const AdminAddStudent = () => {
               </div>
               <div className="p-2 w-full mt-4">
                 <button
-                  className="w-1/2 flex justify-center mx-auto text-white bg-[#40b08c] border-0 py-1 px-4 focus:outline-none hover:bg-[#75dbbb] rounded text-lg"
+                  className="w-1/3 flex justify-center mx-auto text-white bg-[#40b08c] border-0 py-1 px-4 focus:outline-none hover:bg-[#75dbbb] rounded text-lg"
                   type="submit"
                 >
                   {loading ? <ThreeDotLoader /> : "Add Student"}

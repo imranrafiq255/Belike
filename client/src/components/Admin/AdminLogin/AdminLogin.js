@@ -110,7 +110,7 @@ const AdminLogin = () => {
       <div className="absolute  md:relative md:h-full  w-[80%] md:w-[40%] lg:[60%]">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="py-6 h-full  rounded-lg shadow-xl shadow-slate-400/50 bg-[#f7f7f7]  flex flex-col justify-center items-center "
+          className="py-6 h-full  rounded-lg shadow-xl shadow-slate-400/50 bg-[#f7f7f7]  flex flex-col justify-center items-center text-black"
           id="signup"
         >
           <div className=" flex flex-col w-[80%] ">

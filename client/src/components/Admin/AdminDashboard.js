@@ -31,7 +31,7 @@ function AdminDashboard() {
     }
   };
   return (
-    <div className="relative h-[100vh]">
+    <div className="relative h-[100vh] bg-white">
       {Admin ? (
         <div className="grid grid-cols-6 h-full">
           <div
@@ -112,61 +112,6 @@ function AdminDashboard() {
                   Add Grade
                 </h5>
               </li>
-              <li className="mt-4">
-                <h5
-                  href={``}
-                  onClick={() => setActiveComponent("")}
-                  className={` cursor-pointer ${
-                    activeComponent === "" ? "border-b-2 border-white" : ""
-                  }`}
-                >
-                  View Results
-                </h5>
-              </li>
-              <li className="mt-4">
-                <h5
-                  href={``}
-                  onClick={() => setActiveComponent("")}
-                  className={` cursor-pointer ${
-                    activeComponent === "" ? "border-b-2 border-white" : ""
-                  }`}
-                >
-                  View Grades
-                </h5>
-              </li>
-              <li className="mt-4">
-                <h5
-                  href={``}
-                  onClick={() => setActiveComponent("")}
-                  className={` cursor-pointer ${
-                    activeComponent === "" ? "border-b-2 border-white" : ""
-                  }`}
-                >
-                  View Attendence
-                </h5>
-              </li>
-              <li className="mt-4">
-                <h5
-                  href={``}
-                  onClick={() => setActiveComponent("")}
-                  className={` cursor-pointer ${
-                    activeComponent === "" ? "border-b-2 border-white" : ""
-                  }`}
-                >
-                  View Session Feedback
-                </h5>
-              </li>
-              <li className="mt-4">
-                <h5
-                  href={``}
-                  onClick={() => setActiveComponent("")}
-                  className={` cursor-pointer ${
-                    activeComponent === "" ? "border-b-2 border-white" : ""
-                  }`}
-                >
-                  View Course
-                </h5>
-              </li>
             </ul>
             <div>
               <button onClick={adminLogoutHandler}>Signout</button>
@@ -174,7 +119,7 @@ function AdminDashboard() {
           </div>
 
           <div className="p-4 col-span-5">
-            <div className="text-center bg-gray-200 font-bold h-20 flex justify-between items-center p-4">
+            <div className="text-center bg-gray-200 text-black font-bold h-20 flex justify-between items-center p-4">
               <div className="flex justify-between items-center flex-wrap xl:w-[60%]">
                 <h1>{"Hello " + currentAdminData?.admin?.adminName + "!"}</h1>
                 <h1 className="mr-20 font-bold">Admin Dashboard</h1>

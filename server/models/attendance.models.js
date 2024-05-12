@@ -13,10 +13,6 @@ const attendanceSchema = mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-    attendanceLecture: {
-      type: Number,
-      default: 0,
-    },
     gradeId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Grade",
@@ -40,10 +36,6 @@ const attendanceSchema = mongoose.Schema(
     currentYear: {
       type: Number,
       default: getCurrentYear(),
-    },
-    isAttendanceMarked: {
-      type: Boolean,
-      default: false,
     },
   },
   { timestamps: true }

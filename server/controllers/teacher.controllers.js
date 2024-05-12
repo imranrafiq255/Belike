@@ -86,8 +86,7 @@ exports.createAttendance = async (req, res) => {
 };
 exports.takeAttendance = async (req, res) => {
   try {
-    const { attendanceStudents, isAttendanceMarked, attendanceLecture } =
-      req.body;
+    const { attendanceStudents } = req.body;
     const gradeId = req?.params?.grade_id;
     if (!gradeId) {
       return res.status(404).json({
@@ -103,9 +102,7 @@ exports.takeAttendance = async (req, res) => {
     }
     await attendanceModel.create({
       attendanceStudents,
-      isAttendanceMarked,
       gradeId,
-      attendanceLecture: attendanceLecture || 0,
     });
     return res.status(201).json({
       statusCode: STATUS_CODES[201],
@@ -123,7 +120,8 @@ exports.loadCurrentTeacher = async (req, res) => {
     const teacherId = req?.currentTeacher?._id;
     const isCurrentTeacherExisted = await teacherModel
       .findOne({ _id: teacherId })
-      .populate("teacherGradeIncharge");
+      .populate("teacherGrades.gradeId")
+      .populate("teacherCourses.courseId");
     if (!isCurrentTeacherExisted) {
       return res.status(404).json({
         statusCode: STATUS_CODES[404],
