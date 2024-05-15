@@ -20,7 +20,7 @@ Router.route("/view-result/:student_id").get(
   isStudentAuthenticated,
   viewResult
 );
-Router.route("/submit-feedback/:teacher_id").post(
+Router.route("/submit-feedback/:course_id").post(
   isStudentAuthenticated,
   submitFeedbacks
 );

@@ -15,6 +15,7 @@ function AdminDashboard() {
   const [Showmenu, setShowmenu] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [isShowing, setShowing] = useState(false);
   useEffect(() => {
     dispatch(loadCurrentAdminAction());
   }, []);
@@ -113,13 +114,10 @@ function AdminDashboard() {
                 </h5>
               </li>
             </ul>
-            <div>
-              <button onClick={adminLogoutHandler}>Signout</button>
-            </div>
           </div>
 
-          <div className="p-4 col-span-5">
-            <div className="text-center bg-gray-200 text-black font-bold h-20 flex justify-between items-center p-4">
+          <div className="p-4 col-span-5 ">
+            <div className="text-center  relative bg-gray-200 text-black font-bold h-20 flex justify-between items-center p-4">
               <div className="flex justify-between items-center flex-wrap xl:w-[60%]">
                 <h1>{"Hello " + currentAdminData?.admin?.adminName + "!"}</h1>
                 <h1 className="mr-20 font-bold">Admin Dashboard</h1>
@@ -127,8 +125,21 @@ function AdminDashboard() {
               <img
                 src={currentAdminData?.admin?.adminAvatar}
                 alt=""
-                className="w-10 h-10 rounded-full shadow-lg"
+                className="w-10 h-10 rounded-full shadow-lg cursor-pointer"
+                onClick={() => setShowing(!isShowing)}
               />
+              {isShowing ? (
+                <div className="w-40 h-[6rem] z-10 bg-slate-400 absolute right-0 bottom-[-6rem] flex justify-center items-center ">
+                  <div
+                    onClick={adminLogoutHandler}
+                    className="w-20 h-10 bg-white flex justify-center items-center text-xs rounded-lg cursor-pointer"
+                  >
+                    SignOut
+                  </div>
+                </div>
+              ) : (
+                ""
+              )}
             </div>
 
             {activeComponent === "AdminAddTeacher" && <AdminAddTeacher />}

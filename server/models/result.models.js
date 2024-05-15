@@ -2,21 +2,27 @@ const mongoose = require("mongoose");
 
 const resultSchema = mongoose.Schema(
   {
-    testId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Test",
-    },
     gradeId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Grade",
+    },
+    courseId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Course",
     },
     studentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Student",
     },
+    resultTotalMarks: {
+      type: Number,
+    },
     resultObtainedNumber: {
       type: Number,
       default: 0,
+    },
+    testName: {
+      type: String,
     },
     resultStatus: {
       type: Boolean,

@@ -53,6 +53,14 @@ export const AdminAddStudent = () => {
       studentIdCardCopy &&
       studentId
     ) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(studentEmail)) {
+        // Handle invalid email
+        handleShowFailureToast("Invalid email format");
+
+        // Optionally, you can return or throw an error here
+        return;
+      }
       const Courses = [];
       studentCourses.map((course) => {
         return Courses.push({ courseId: course });
@@ -209,7 +217,12 @@ export const AdminAddStudent = () => {
                       </option>
                       {courses && Array.isArray(courses)
                         ? courses.map((course) => (
-                            <option value={course._id}>
+                            <option
+                              value={JSON.stringify({
+                                courseId: course._id,
+                                courseTitle: course.courseTitle,
+                              })}
+                            >
                               {course.courseTitle}
                             </option>
                           ))

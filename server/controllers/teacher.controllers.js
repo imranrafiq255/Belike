@@ -121,7 +121,8 @@ exports.loadCurrentTeacher = async (req, res) => {
     const isCurrentTeacherExisted = await teacherModel
       .findOne({ _id: teacherId })
       .populate("teacherGrades.gradeId")
-      .populate("teacherCourses.courseId");
+      .populate("teacherCourses.courseId")
+      .populate("teacherGradeIncharge");
     if (!isCurrentTeacherExisted) {
       return res.status(404).json({
         statusCode: STATUS_CODES[404],
@@ -198,32 +199,51 @@ exports.createTest = async (req, res) => {
 };
 exports.createResult = async (req, res) => {
   try {
-    const testId = req?.params?.test_id;
+    const courseId = req?.params?.course_id;
     const gradeId = req?.params?.grade_id;
     const studentId = req?.params?.student_id;
-    if ((!testId, !gradeId, !studentId)) {
+    if ((!courseId, !studentId)) {
       return res.status(404).json({
         statusCode: STATUS_CODES[404],
         message:
-          "Test Id or Grade Id or Student Id is missing, please make sure all parameters must be added!",
+          "Course Id or Grade Id or Student Id is missing, please make sure all parameters must be added!",
       });
     }
-    const { resultObtainedNumber, resultStatus, resultPercentage } = req.body;
-    if (!resultObtainedNumber || !resultStatus || !resultPercentage) {
+    if (!gradeId) {
+      return res.status(404).json({
+        statusCode: STATUS_CODES[404],
+        message: "Grade Id is missing, please make sure this mistake",
+      });
+    }
+    const { resultObtainedNumber, resultStatus, resultTotalMarks, testName } =
+      req.body;
+    if (!resultObtainedNumber || !resultStatus || !resultTotalMarks) {
       return res.status(404).json({
         statusCode: STATUS_CODES[404],
         message:
-          "Result Obtained Number or Result Status or Result Percentage is missing, Please add all fields!",
+          "Result Obtained Number or Result Status or Result Total Marks is missing, Please add all fields!",
+      });
+    }
+    let resultPercentage = (resultObtainedNumber / resultTotalMarks) * 100;
+    const student = await studentModel.findOne({ _id: studentId });
+    if (!student) {
+      return res.status(404).json({
+        statusCode: STATUS_CODES[404],
+        message: "Student not found into database with given id",
       });
     }
     const newResult = await new resultModel({
-      testId,
+      courseId,
       gradeId,
       studentId,
       resultObtainedNumber,
       resultStatus,
+      resultTotalMarks,
+      testName,
       resultPercentage,
     }).save();
+    student.studentResults.push(newResult._id);
+    await student.save();
     return res.status(200).json({
       statusCode: STATUS_CODES[200],
       message: "Result is submitted successfully",
@@ -308,6 +328,34 @@ exports.loadAllStudentOnSameGradeIncharge = async (req, res) => {
     return res.status(200).json({
       statusCode: STATUS_CODES[200],
       studentsSameGrade,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      statusCode: STATUS_CODES[500],
+      message: error.message,
+    });
+  }
+};
+
+exports.loadStudentsOfGrade = async (req, res) => {
+  try {
+    const studentGrade = req?.params?.grade_id;
+    if (!studentGrade) {
+      return res.status(404).json({
+        statusCode: STATUS_CODES[400],
+        message: "Grade id parameter is missing",
+      });
+    }
+    const students = await studentModel.find({ studentGrade });
+    if (!students) {
+      return res.status(404).json({
+        statusCode: STATUS_CODES[400],
+        message: "No student found in database with this id",
+      });
+    }
+    return res.status(200).json({
+      statusCode: STATUS_CODES[200],
+      students,
     });
   } catch (error) {
     return res.status(500).json({

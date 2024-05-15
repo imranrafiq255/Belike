@@ -697,3 +697,25 @@ exports.loadAllStudents = async (req, res) => {
     });
   }
 };
+
+exports.loadAllCoursesFeedbacks = async (req, res) => {
+  try {
+    const coursesFeedbacks = await feedbackModel
+      .find()
+      .populate("studentId")
+      .populate("courseId")
+      .populate({
+        path: "courseId",
+        populate: { path: "courseTeacher", model: teacherModel },
+      });
+    res.status(200).json({
+      statusCode: STATUS_CODES[200],
+      coursesFeedbacks,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      statusCode: STATUS_CODES[500],
+      message: error.message,
+    });
+  }
+};

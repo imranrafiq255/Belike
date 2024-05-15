@@ -74,7 +74,7 @@ const TeacherLogin = () => {
         teacherPassword: data.password,
       });
       handleShowSuccessToast(response.data.message);
-      navigate("/teacher-dashboard");
+      navigate("/school-portal-home");
     } catch (error) {
       handleShowFailureToast(error.response.data.message);
     }
@@ -166,9 +166,11 @@ const TeacherLogin = () => {
             {errors.password && (
               <p className="text-red-700">{errors.password.message}</p>
             )}
-            <button type="submit" className="btn mt-4 bg-black text-white p-2">
-              Submit
-            </button>
+            <input
+              type="submit"
+              value={"Login"}
+              className="mt-4 bg-black text-white p-2 hover:bg-slate-600 hover:text-black"
+            />
             <h3 className="mt-3">
               {" "}
               <a

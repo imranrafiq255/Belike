@@ -16,6 +16,7 @@ const {
   viewGradeAttendance,
   loadAllGrades,
   loadAllCourses,
+  loadAllCoursesFeedbacks,
 } = require("../controllers/admin.controllers");
 const multipleUpload = require("../middlewares/imageUpload.middlewares");
 const isAdminAuthenticated = require("../middlewares/isAdminAuthenticated.middlewares");
@@ -58,4 +59,8 @@ Router.route("/view-grade-attendance/:grade_id").get(
 Router.route("/load-all-grades").get(isAdminAuthenticated, loadAllGrades);
 Router.route("/load-all-students").get(isAdminAuthenticated, loadAllStudents);
 Router.route("/load-all-courses").get(isAdminAuthenticated, loadAllCourses);
+Router.route("/load-all-courses-feedbacks").get(
+  isAdminAuthenticated,
+  loadAllCoursesFeedbacks
+);
 module.exports = Router;

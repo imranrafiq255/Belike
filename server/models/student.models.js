@@ -36,6 +36,12 @@ const studentSchema = mongoose.Schema(
       },
     ],
     studentAvatar: String,
+    studentResults: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Result",
+      },
+    ],
   },
   { timestamp: true }
 );

@@ -457,20 +457,25 @@ export default function SchoolPortal() {
                   <i className="fa-solid fa-comments text-center fa-2x mt-3" />
                   <div className="card-body">
                     <h6 className="text-center pt-2">
-                      <a
+                      <NavLink
                         className="text-decoration-none text-dark"
-                        href="feedback.html"
+                        to={"/student-add-feedback"}
                       >
-                        Feedback
-                      </a>
+                        Add Feedback
+                      </NavLink>
                     </h6>
                   </div>
                 </div>
                 <div className="card col-6 col-sm-6 col-md-4 col-lg-2 ms-2 mt-3">
-                  <i className="fa-solid fa-chart-bar text-center fa-2x mt-3" />
-                  <div className="card-body">
-                    <h6 className="text-center pt-2">Result</h6>
-                  </div>
+                  <NavLink
+                    to={"/student-result"}
+                    className={"flex justify-center flex-col items-center"}
+                  >
+                    <i className="fa-solid fa-chart-bar text-center fa-2x mt-3" />
+                    <div className="card-body">
+                      <h6 className="text-center pt-2">View Result</h6>
+                    </div>
+                  </NavLink>
                 </div>
               </div>
             </div>
@@ -602,7 +607,7 @@ export default function SchoolPortal() {
                     <h6 className="text-center pt-2">Meeting</h6>
                   </div>
                 </div>
-                <div className="card col-6 col-sm-6 col-md-4 col-lg-2 ms-2 mt-3">
+                {/* <div className="card col-6 col-sm-6 col-md-4 col-lg-2 ms-2 mt-3">
                   <i className="fa-solid fa-comments text-center fa-2x mt-3" />
                   <div className="card-body">
                     <h6 className="text-center pt-2">
@@ -614,12 +619,17 @@ export default function SchoolPortal() {
                       </a>
                     </h6>
                   </div>
-                </div>
+                </div> */}
                 <div className="card col-6 col-sm-6 col-md-4 col-lg-2 ms-2 mt-3">
-                  <i className="fa-solid fa-chart-bar text-center fa-2x mt-3" />
-                  <div className="card-body">
-                    <h6 className="text-center pt-2">Result</h6>
-                  </div>
+                  <NavLink
+                    to={"/teacher-add-result"}
+                    className={"flex justify-center flex-col items-center"}
+                  >
+                    <i className="fa-solid fa-chart-bar text-center fa-2x mt-3" />
+                    <div className="card-body">
+                      <h6 className="text-center pt-2">Add Result</h6>
+                    </div>
+                  </NavLink>
                 </div>
               </div>
             </div>
@@ -668,6 +678,19 @@ export default function SchoolPortal() {
                   <i className="fa-solid fa-calendar-check text-center fa-2x mt-3" />
                   <div className="card-body">
                     <h6 className="text-center pt-2">Reminder</h6>
+                  </div>
+                </div>
+                <div className="card col-6 col-sm-6 col-md-4 col-lg-2 ms-2 mt-3">
+                  <i className="fa-solid fa-comments text-center fa-2x mt-3" />
+                  <div className="card-body">
+                    <h6 className="text-center pt-2">
+                      <NavLink
+                        className="text-decoration-none text-dark"
+                        to="/admin-feedback"
+                      >
+                        Feedback
+                      </NavLink>
+                    </h6>
                   </div>
                 </div>
                 <div

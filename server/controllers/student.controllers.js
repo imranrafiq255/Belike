@@ -7,6 +7,7 @@ const resultModel = require("../models/result.models");
 const feedbackResponseModel = require("../models/feedbackResponse.models");
 const teacherModel = require("../models/teacher.models");
 const feedbackModel = require("../models/feedback.models");
+const gradeModel = require("../models/grade.models");
 const {
   startOfWeek,
   endOfWeek,
@@ -15,6 +16,7 @@ const {
   startOfYear,
   endOfYear,
 } = require("date-fns");
+const courseModel = require("../models/course.models");
 exports.studentLogin = async (req, res) => {
   try {
     const { studentEmail, studentPassword } = req.body;
@@ -190,7 +192,7 @@ exports.viewResult = async (req, res) => {
 exports.submitFeedbacks = async (req, res) => {
   try {
     const studentId = req?.currentStudent?._id;
-    const teacherId = req?.params?.teacher_id;
+    const courseId = req?.params?.course_id;
     const { feedbackMessage } = req.body;
     if (!studentId) {
       return res.status(404).json({
@@ -198,10 +200,10 @@ exports.submitFeedbacks = async (req, res) => {
         message: "Student id parameter is missing",
       });
     }
-    if (!teacherId) {
+    if (!courseId) {
       return res.status(404).json({
         statusCode: STATUS_CODES[404],
-        message: "Teacher Id is missing",
+        message: "Course Id is missing",
       });
     }
     if (!feedbackMessage) {
@@ -210,15 +212,15 @@ exports.submitFeedbacks = async (req, res) => {
         message: "Feedback message field is missing",
       });
     }
-    const teacher = await teacherModel.findOne({ _id: teacherId });
-    if (!teacher) {
+    const course = await courseModel.findOne({ _id: courseId });
+    if (!course) {
       return res.status(404).json({
         statusCode: STATUS_CODES[404],
-        message: "Teacher not found in database with id: " + teacherId,
+        message: "course is not found in database with id: " + courseId,
       });
     }
     const newFeedback = await new feedbackModel({
-      teacherId,
+      courseId,
       studentId,
       feedbackMessage,
     }).save();
@@ -258,6 +260,10 @@ exports.loadCurrentStudent = async (req, res) => {
             path: "courseTeacher",
           },
         },
+      })
+      .populate({
+        path: "studentResults",
+        populate: { path: "courseId", model: courseModel },
       });
 
     return res.status(200).json({

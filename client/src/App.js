@@ -43,6 +43,10 @@ import TeacherCourseTimetable from "./components/Teacher/TeacherCourseTimetable/
 import TeacherWeeklyAttendance from "./components/Teacher/TeacherWeeklyAttendance/TeacherWeeklyAttendance.js";
 import TeacherYearlyAttendance from "./components/Teacher/TeacherYearlyAttendance/TeacherYearlyAttendance.js";
 import TeacherMonthlyAttendance from "./components/Teacher/TeacherMonthlyAttendance/TeacherMonthlyAttendance.js";
+import StudentAddFeedback from "./components/Student/StudentAddFeedback/StudentAddFeedback.js";
+import AdminFeedback from "./components/Admin/AdminFeedback/AdminFeedback.js";
+import { TeacherAddResult } from "./components/Teacher/TeacherAddResult/TeacherAddResult.js";
+import AddResult from "./components/Student/StudentResult/StudentResult.js";
 function App() {
   const dispatch = useDispatch();
   const [studentLoading, setStudentLoading] = useState(true);
@@ -93,7 +97,10 @@ function App() {
             path="/admin-dashboard"
             element={isAdminAuthenticated ? <AdminDashboard /> : <AdminLogin />}
           />
-
+          <Route
+            path="/admin-feedback"
+            element={isAdminAuthenticated ? <AdminFeedback /> : <AdminLogin />}
+          />
           <Route
             path="/student-dashboard"
             element={isStudentAuthenticated ? <StudentDashboard /> : <Login />}
@@ -150,7 +157,16 @@ function App() {
               isStudentAuthenticated ? <StudentYearlyAtttendance /> : <Login />
             }
           />
-
+          <Route
+            path="/student-add-feedback"
+            element={
+              isStudentAuthenticated ? <StudentAddFeedback /> : <Login />
+            }
+          />
+          <Route
+            path="/student-result"
+            element={isStudentAuthenticated ? <AddResult /> : <Login />}
+          />
           {/* Teacher Routes  */}
           <Route
             path="/teacher-take-attendance"
@@ -211,6 +227,13 @@ function App() {
               ) : (
                 <TeacherLogin />
               )
+            }
+          />
+
+          <Route
+            path="/teacher-add-result"
+            element={
+              isTeacherAuthenticated ? <TeacherAddResult /> : <TeacherLogin />
             }
           />
         </Routes>

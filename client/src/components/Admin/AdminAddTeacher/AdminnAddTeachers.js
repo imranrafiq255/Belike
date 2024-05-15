@@ -125,7 +125,7 @@ export const AdminAddTeacher = () => {
 
   //  ################### handle SlectedCourses multiple in form of array ########################
   const handleSelectCourse = (event) => {
-    const selectedCourse = event.target.value;
+    const selectedCourse = JSON.parse(event.target.value).courseId;
     setSelectedCourses((prevCourses) => {
       if (!prevCourses.includes(selectedCourse)) {
         return [...prevCourses, selectedCourse];
@@ -200,7 +200,6 @@ export const AdminAddTeacher = () => {
                   >
                     Teacher Grades
                   </label>
-
                   <div>
                     <select
                       id="grades"
@@ -220,7 +219,6 @@ export const AdminAddTeacher = () => {
                           ))
                         : ""}
                     </select>
-
                     <div>
                       {selectedGrades.map((option, index) => (
                         <div
@@ -315,13 +313,17 @@ export const AdminAddTeacher = () => {
                       </option>
                       {courses && Array.isArray(courses)
                         ? courses.map((course) => (
-                            <option value={course?._id}>
+                            <option
+                              value={JSON.stringify({
+                                courseId: course?._id,
+                                courseName: course?.courseTitle,
+                              })}
+                            >
                               {course?.courseTitle}
                             </option>
                           ))
                         : ""}
                     </select>
-
                     <div>
                       {SelectedCourses.map((option, index) => (
                         <div
@@ -390,10 +392,10 @@ export const AdminAddTeacher = () => {
                   className="flex w-1/3 mx-auto justify-center items-center text-white bg-[#40b08c] border-0 py-1 px-4 focus:outline-none hover:bg-[#75dbbb] rounded text-lg"
                   type="submit"
                 >
-                  {loading ? <ThreeDotLoader /> : "Add Course"}
+                  {loading ? <ThreeDotLoader /> : "Add Teacher"}
                 </button>
               </div>
-              <div className="p-2 w-full    text-center"></div>
+              <div className="p-2 w-full text-center"></div>
             </div>
           </div>
         </div>

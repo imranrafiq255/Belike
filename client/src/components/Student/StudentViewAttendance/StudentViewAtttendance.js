@@ -74,7 +74,9 @@ const StudentViewAtttendance = () => {
               <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs  uppercase bg-black text-white">
                   <tr>
-                    {studentAttendance && Array.isArray(studentAttendance)
+                    {studentAttendance &&
+                    studentAttendance.length > 0 &&
+                    Array.isArray(studentAttendance)
                       ? studentAttendance.map((lecture) => (
                           <th scope="col" class="px-6 py-3">
                             L#{lecture.attendanceLecture}

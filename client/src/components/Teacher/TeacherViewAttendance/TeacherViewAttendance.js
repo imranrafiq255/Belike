@@ -73,7 +73,9 @@ export default function TeacherViewAttendance() {
                           <tr
                             key={student._id}
                             className={`border-b dark:border-neutral-500 ${
-                              studentIndex % 2 === 0 ? "bg-gray-100" : ""
+                              studentIndex % 2 === 0
+                                ? "bg-gray-100"
+                                : "text-white"
                             }`}
                           >
                             <td className="whitespace-nowrap px-6 py-4">

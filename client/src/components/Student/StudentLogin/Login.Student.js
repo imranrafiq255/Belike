@@ -14,8 +14,9 @@ import {
   handleShowSuccessToast,
 } from "../../ToastMessages/ToastMessage";
 import axios from "axios";
-
+import { useNavigate } from "react-router-dom";
 const StudentLogin = () => {
+  const navigate = useNavigate();
   const {
     control,
     handleSubmit,
@@ -75,6 +76,7 @@ const StudentLogin = () => {
       });
       handleShowSuccessToast(response.data.message);
       reset();
+      navigate("/school-portal-home");
     } catch (error) {
       console.log(error.response.data.message);
       handleShowFailureToast(error.response.data.message);
@@ -168,9 +170,11 @@ const StudentLogin = () => {
             {errors.password && (
               <p className="text-red-700">{errors.password.message}</p>
             )}
-            <button type="submit" className="btn mt-4 bg-black text-white p-2">
-              Submit
-            </button>
+            <input
+              type="submit"
+              value={"Login"}
+              className="mt-4 bg-black text-white p-2 hover:bg-slate-600 hover:text-black"
+            />
             <h3 className="mt-3">
               {" "}
               <a

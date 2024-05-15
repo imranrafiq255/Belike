@@ -8,6 +8,7 @@ const {
   takeAttendance,
   viewGradeAttendance,
   loadAllStudentOnSameGradeIncharge,
+  loadStudentsOfGrade,
 } = require("../controllers/teacher.controllers");
 const isTeacherAuthenticated = require("../middlewares/isTeacherAuthenticated");
 
@@ -22,7 +23,7 @@ Router.route("/create-test/:grade_id/:test_course_id").post(
   isTeacherAuthenticated,
   createTest
 );
-Router.route("/create-result/:test_id/:grade_id/:student_id").post(
+Router.route("/create-result/:course_id/:student_id/:grade_id").post(
   isTeacherAuthenticated,
   createResult
 );
@@ -42,5 +43,10 @@ Router.route("/view-grade-attendance").get(
 Router.route("/load-all-students-same-grade").get(
   isTeacherAuthenticated,
   loadAllStudentOnSameGradeIncharge
+);
+
+Router.route("/load-students-with-grade/:grade_id").get(
+  isTeacherAuthenticated,
+  loadStudentsOfGrade
 );
 module.exports = Router;

@@ -86,6 +86,7 @@ const TeacherTakeAttendance = () => {
   const customGetMonth = (date) => {
     return new Date(date).getMonth() + 1;
   };
+  console.log(currentTeacherData);
   return (
     <div className="h-[100vh] xl:mx-8">
       <div className="grid grid-cols-6 h-full">
