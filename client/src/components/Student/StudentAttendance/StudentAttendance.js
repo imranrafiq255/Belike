@@ -26,6 +26,7 @@ const StudentAtttendance = () => {
     };
     loadCurrentStudentAttendance();
   }, []);
+
   console.log(attendance);
   return (
     <>
@@ -71,7 +72,7 @@ const StudentAtttendance = () => {
             </div>
           </div>
           <div className="table w-full">
-            <div class="relative overflow-x-auto w-full">
+            <div class="relative overflow-x-auto  w-full">
               <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs  uppercase bg-black text-white">
                   <tr>

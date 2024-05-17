@@ -21,6 +21,7 @@ export const AdminAddGrade = () => {
     register,
     formState: { errors },
   } = useForm();
+
   useEffect(() => {
     const fetchAllCourses = async () => {
       try {
@@ -41,13 +42,18 @@ export const AdminAddGrade = () => {
     };
     fetchAllTeachers();
   }, []);
-  //   ###################################### Grade Courses options ##################################
+
+  // Grade Courses options
   const [SelectedCourses, setSelectedCourses] = useState([]);
+  const [selectedCoursesNames, setSelectedCoursesNames] = useState([]);
+
   useEffect(() => {
     setGradeCourses(SelectedCourses);
   }, [SelectedCourses]);
+
   const handleSelectCourse = (event) => {
-    const selectedCourse = event.target.value;
+    const selectedCourse = JSON.parse(event.target.value).courseId;
+    const selectedCourseName = JSON.parse(event.target.value);
     setSelectedCourses((prevCourses) => {
       if (!prevCourses.includes(selectedCourse)) {
         return [...prevCourses, selectedCourse];
@@ -55,10 +61,24 @@ export const AdminAddGrade = () => {
         return prevCourses;
       }
     });
+    setSelectedCoursesNames((prevNames) => {
+      if (
+        !prevNames.some((item) => item.courseId === selectedCourseName.courseId)
+      ) {
+        return [...prevNames, selectedCourseName];
+      } else {
+        return prevNames;
+      }
+    });
   };
 
   const removeCourse = (course) => {
-    setSelectedCourses(SelectedCourses.filter((item) => item !== course));
+    setSelectedCourses(
+      SelectedCourses.filter((item) => item !== course.courseId)
+    );
+    setSelectedCoursesNames(
+      selectedCoursesNames.filter((item) => item.courseId !== course.courseId)
+    );
   };
 
   const addGradeDataSendHandler = (e) => {
@@ -71,8 +91,8 @@ export const AdminAddGrade = () => {
       gradeIncharge
     ) {
       const Courses = [];
-      gradeCourses.map((course) => {
-        return Courses.push({ courseId: course });
+      gradeCourses.forEach((course) => {
+        Courses.push({ courseId: course });
       });
       const data = {
         gradeCategory,
@@ -101,16 +121,18 @@ export const AdminAddGrade = () => {
     } else {
       handleShowFailureToast("Input parameter is missing");
     }
-    // ############### Api Request Here #######################
   };
 
   return (
     <div className="md:px-8 mt-4">
       <Toaster />
-      <form className="text-gray-600 body-font relative">
+      <form
+        className="text-gray-600 body-font relative"
+        onSubmit={addGradeDataSendHandler}
+      >
         <div className="">
           <div className="flex flex-col text-center w-full mb-2">
-            <h1 className="sm:text-3xl text-2xl font-medium gradeCategory-font  text-gray-900">
+            <h1 className="sm:text-3xl text-2xl font-medium text-gray-900">
               Add Grade
             </h1>
           </div>
@@ -129,8 +151,8 @@ export const AdminAddGrade = () => {
                     id="gradeCategory"
                     name="gradeCategory"
                     value={gradeCategory}
-                    placeholder="Enter unique grade catogory"
-                    className={`w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out `}
+                    placeholder="Enter unique grade category"
+                    className="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                     onChange={(e) => setGradeCategory(e.target.value)}
                   />
                 </div>
@@ -143,9 +165,9 @@ export const AdminAddGrade = () => {
                   </label>
                   <div>
                     <select
-                      id="gradeCoursess"
-                      name="gradeCoursess"
-                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400  dark:focus:ring-purple-500 dark:focus:border-purple-500"
+                      id="gradeCourses"
+                      name="gradeCourses"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 block w-full p-2.5"
                       onChange={handleSelectCourse}
                       value=""
                     >
@@ -154,20 +176,27 @@ export const AdminAddGrade = () => {
                       </option>
                       {courses && Array.isArray(courses)
                         ? courses.map((course) => (
-                            <option value={course?._id}>
+                            <option
+                              key={course._id}
+                              value={JSON.stringify({
+                                courseId: course?._id,
+                                courseName: course?.courseTitle,
+                              })}
+                            >
                               {course?.courseTitle}
                             </option>
                           ))
                         : ""}
                     </select>
                     <div>
-                      {SelectedCourses.map((option, index) => (
+                      {selectedCoursesNames.map((option, index) => (
                         <div
                           key={index}
                           className="inline-block bg-gray-100 text-gray-800 rounded-md px-2 py-1 mr-2 mt-2"
                         >
-                          {option}
+                          {option.courseName}
                           <button
+                            type="button"
                             onClick={() => removeCourse(option)}
                             className="ml-2"
                           >

@@ -108,12 +108,13 @@ export const AdminAddStudent = () => {
   };
 
   const [SelectedCourses, setSelectedCourses] = useState([]);
+  const [selectedCoursesNames, setSelectedCoursesNames] = useState([]);
   useEffect(() => {
     setStudentCourses(SelectedCourses);
   }, [SelectedCourses]);
   const handleSelectCourse = (event) => {
-    console.log(event.target.value);
-    const selectedCourse = event.target.value;
+    const selectedCourse = JSON.parse(event.target.value).courseId;
+    const selectedCourseName = JSON.parse(event.target.value);
     setSelectedCourses((prevCourses) => {
       if (!prevCourses.includes(selectedCourse)) {
         return [...prevCourses, selectedCourse];
@@ -121,10 +122,24 @@ export const AdminAddStudent = () => {
         return prevCourses;
       }
     });
+    setSelectedCoursesNames((prevNames) => {
+      if (
+        !prevNames.some((item) => item.courseId === selectedCourseName.courseId)
+      ) {
+        return [...prevNames, selectedCourseName];
+      } else {
+        return prevNames;
+      }
+    });
   };
 
   const removeCourse = (course) => {
-    setSelectedCourses(SelectedCourses.filter((item) => item !== course));
+    setSelectedCourses(
+      SelectedCourses.filter((item) => item !== course.courseId)
+    );
+    setSelectedCoursesNames(
+      selectedCoursesNames.filter((item) => item.courseId !== course.courseId)
+    );
   };
 
   // ########################### Apply Api request here ############################
@@ -219,22 +234,22 @@ export const AdminAddStudent = () => {
                         ? courses.map((course) => (
                             <option
                               value={JSON.stringify({
-                                courseId: course._id,
-                                courseTitle: course.courseTitle,
+                                courseId: course?._id,
+                                courseName: course?.courseTitle,
                               })}
                             >
-                              {course.courseTitle}
+                              {course?.courseTitle}
                             </option>
                           ))
                         : ""}
                     </select>
                     <div>
-                      {SelectedCourses.map((option, index) => (
+                      {selectedCoursesNames.map((option, index) => (
                         <div
                           key={index}
                           className="inline-block bg-gray-100 text-gray-800 rounded-md px-2 py-1 mr-2 mt-2"
                         >
-                          {option}
+                          {option.courseName}
                           <button
                             onClick={() => removeCourse(option)}
                             className="ml-2"

@@ -37,12 +37,7 @@ export const TeacherAddResult = () => {
     (state) => state.currentTeacherData
   );
   const onSubmit = async (data) => {
-    console.log(data.obtainedMarks);
-    console.log(data.totalMarks);
-
     if (data) {
-      console.log("im here");
-
       if (data.obtainedMarks > data.totalMarks) {
         handleShowFailureToast(
           "Obtained marks must be lesser or equal to total marks"

@@ -7,6 +7,7 @@ import {
 } from "../../ToastMessages/ToastMessage";
 import { Toaster } from "react-hot-toast";
 import ThreeDotLoader from "../../Loaders/ThreeDotLoader";
+
 export const AdminAddTeacher = () => {
   const [courses, setCourses] = useState(null);
   const [grades, setGrades] = useState(null);
@@ -21,6 +22,7 @@ export const AdminAddTeacher = () => {
   const [teacherCourses, setTeacherCourses] = useState([]);
   const [teacherName, setTeacherName] = useState([]);
   const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     const fetchAllGrades = async () => {
       try {
@@ -31,6 +33,7 @@ export const AdminAddTeacher = () => {
       }
     };
     fetchAllGrades();
+
     const fetchAllCourses = async () => {
       try {
         const response = await axios.get("/api/v1/admin/load-all-courses");
@@ -104,16 +107,20 @@ export const AdminAddTeacher = () => {
       handleShowFailureToast("Input parameter is missing!");
     }
   };
+
   const [selectedGrades, setSelectedGrades] = useState([]);
   const [SelectedCourses, setSelectedCourses] = useState([]);
+  const [selectedCoursesNames, setSelectedCoursesNames] = useState([]);
+  const [selectedGradeCategory, setSelectedGradeCategory] = useState([]);
 
   useEffect(() => {
     setTeacherCourses(SelectedCourses);
     setTeacherGrades(selectedGrades);
   }, [selectedGrades, SelectedCourses]);
-  //  ################### handle SlectedOptions of Grades multiple in form of array ########################
+
   const handleSelectChange = (event) => {
-    const selectedOption = event.target.value;
+    const selectedOption = JSON.parse(event.target.value).gradeId;
+    const gradeCategory = JSON.parse(event.target.value);
     setSelectedGrades((prevOptions) => {
       if (!prevOptions.includes(selectedOption)) {
         return [...prevOptions, selectedOption];
@@ -121,11 +128,18 @@ export const AdminAddTeacher = () => {
         return prevOptions;
       }
     });
+    setSelectedGradeCategory((prevGrades) => {
+      if (!prevGrades.some((item) => item.gradeId === gradeCategory.gradeId)) {
+        return [...prevGrades, gradeCategory];
+      } else {
+        return prevGrades;
+      }
+    });
   };
 
-  //  ################### handle SlectedCourses multiple in form of array ########################
   const handleSelectCourse = (event) => {
     const selectedCourse = JSON.parse(event.target.value).courseId;
+    const selectedCourseName = JSON.parse(event.target.value);
     setSelectedCourses((prevCourses) => {
       if (!prevCourses.includes(selectedCourse)) {
         return [...prevCourses, selectedCourse];
@@ -133,15 +147,33 @@ export const AdminAddTeacher = () => {
         return prevCourses;
       }
     });
+    setSelectedCoursesNames((prevNames) => {
+      if (
+        !prevNames.some((item) => item.courseId === selectedCourseName.courseId)
+      ) {
+        return [...prevNames, selectedCourseName];
+      } else {
+        return prevNames;
+      }
+    });
   };
 
   const removeCourse = (course) => {
-    setSelectedCourses(SelectedCourses.filter((item) => item !== course));
+    setSelectedCourses(
+      SelectedCourses.filter((item) => item !== course.courseId)
+    );
+    setSelectedCoursesNames(
+      selectedCoursesNames.filter((item) => item.courseId !== course.courseId)
+    );
   };
 
   const removeOption = (option) => {
-    setSelectedGrades(selectedGrades.filter((item) => item !== option));
+    setSelectedGrades(selectedGrades.filter((item) => item !== option.gradeId));
+    setSelectedGradeCategory(
+      selectedGradeCategory.filter((item) => item.gradeId !== option.gradeId)
+    );
   };
+  console.log(selectedGradeCategory);
   return (
     <div className="md:px-8 mt-4">
       <Toaster />
@@ -213,19 +245,24 @@ export const AdminAddTeacher = () => {
                       </option>
                       {grades && Array.isArray(grades)
                         ? grades.map((grade) => (
-                            <option value={grade?._id}>
+                            <option
+                              value={JSON.stringify({
+                                gradeId: grade?._id,
+                                gradeCategory: grade?.gradeCategory,
+                              })}
+                            >
                               {"Grade " + grade?.gradeCategory}
                             </option>
                           ))
                         : ""}
                     </select>
                     <div>
-                      {selectedGrades.map((option, index) => (
+                      {selectedGradeCategory.map((option, index) => (
                         <div
                           key={index}
                           className="inline-block bg-gray-100 text-gray-800 rounded-md px-2 py-1 mr-2 mt-2"
                         >
-                          {option}
+                          {option.gradeCategory}
                           <button
                             onClick={() => removeOption(option)}
                             className="ml-2"
@@ -325,12 +362,12 @@ export const AdminAddTeacher = () => {
                         : ""}
                     </select>
                     <div>
-                      {SelectedCourses.map((option, index) => (
+                      {selectedCoursesNames.map((option, index) => (
                         <div
                           key={index}
                           className="inline-block bg-gray-100 text-gray-800 rounded-md px-2 py-1 mr-2 mt-2"
                         >
-                          {option}
+                          {option.courseName}
                           <button
                             onClick={() => removeCourse(option)}
                             className="ml-2"

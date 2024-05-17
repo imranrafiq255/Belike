@@ -6,6 +6,7 @@ const StudentMonthlyAtttendance = () => {
   const dispatch = useDispatch();
   const [studentAttendance, setStudentAttendance] = useState(null);
   const [attendance, setAttendance] = useState(null);
+  const [presents, setPresents] = useState([]);
   useEffect(() => {
     dispatch(loadCurrentStudentAction());
   }, []);
@@ -20,13 +21,20 @@ const StudentMonthlyAtttendance = () => {
         );
         setAttendance(response.data.attendanceData);
         setStudentAttendance(response.data.studentAttendance);
+        setPresents(
+          response.data.attendanceData.filter((item) => {
+            return item.present;
+          })
+        );
       } catch (error) {
         console.log(error.response.data.message);
       }
     };
     loadCurrentStudentAttendance();
   }, []);
-  console.log(studentAttendance);
+  const customMonth = (month) => {
+    return month + 1;
+  };
   return (
     <>
       <div className="view-attendance-container h-screen w-screen overflow-auto">
@@ -67,6 +75,26 @@ const StudentMonthlyAtttendance = () => {
                         ?.gradeCategory}
                   </h1>
                 </div>
+                <div className="font-bold text-xl mt-4">
+                  <h1>
+                    Student Attendence Percentage{" "}
+                    <span
+                      className={`${
+                        (attendance &&
+                          presents &&
+                          presents.length / attendance.length) *
+                          100 >
+                        60
+                          ? "bg-green-500 "
+                          : "bg-red-500"
+                      } text-white p-2 rounded-lg ml-3`}
+                    >
+                      {attendance &&
+                        presents &&
+                        (presents.length / attendance.length) * 100 + "%"}
+                    </span>
+                  </h1>
+                </div>
               </div>
             </div>
           </div>
@@ -79,7 +107,13 @@ const StudentMonthlyAtttendance = () => {
                     {studentAttendance && Array.isArray(studentAttendance)
                       ? studentAttendance.map((attendance) => (
                           <th scope="col" class="px-6 py-3">
-                            {new Date(attendance.attendanceDate).getDay()}
+                            {new Date(attendance.attendanceDate).getDay() +
+                              "/" +
+                              customMonth(
+                                new Date(attendance.attendanceDate).getMonth()
+                              ) +
+                              "/" +
+                              new Date(attendance.attendanceDate).getFullYear()}
                           </th>
                         ))
                       : ""}
